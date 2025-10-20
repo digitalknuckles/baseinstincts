@@ -73,9 +73,9 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 </div>
 
 <!-- Web3 + Ethers imports -->
-<script src="https://unpkg.com/ethers@6.8.0/dist/ethers.min.js"></script>
-<script src="https://unpkg.com/@web3modal/wagmi@3.6.4/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/@wagmi/core@2.8.4/dist/index.umd.js"></script>
+<script src="https://unpkg.com/@web3modal/wagmi@3.6.4/dist/index.umd.js"></script>
 <script src="https://unpkg.com/viem@2.19.5/dist/viem.umd.js"></script>
 
 <script>
@@ -110,7 +110,7 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 
   // Web3Modal v3 Setup
   (async () => {
-    const { mainnet, base } = window.wagmi.chains;
+    const { mainnet, base } = window.viem.chains;
     const projectId = "YOUR_WALLETCONNECT_PROJECT_ID";
     if (!window.wagmi || !window.Web3ModalWagmi) return console.error("Web3Modal or wagmi not loaded.");
 
