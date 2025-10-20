@@ -79,81 +79,65 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 <script src="https://unpkg.com/viem@2.19.5/dist/viem.umd.js"></script>
 
 <script>
-  // Demo card generator
-  const TRACK = document.getElementById("track");
-  for (let i = 1; i <= 12; i++) {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="placeholder_card_${(i % 6) + 1}.png" alt="Card ${i}" />
-      <div class="meta">
-        <div class="name">Naïve #${i}</div>
-        <div class="desc">Raw Expression · Tier ${Math.ceil(Math.random() * 5)}</div>
-      </div>`;
-    TRACK.appendChild(card);
-  }
+(async () => {
+  // ✅ Define chains manually (since UMD doesn't export them automatically)
+  const mainnet = {
+    id: 1,
+    name: "Ethereum Mainnet",
+    network: "mainnet",
+    nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+    rpcUrls: { default: { http: ["https://rpc.ankr.com/eth"] } },
+    blockExplorers: { default: { name: "Etherscan", url: "https://etherscan.io" } }
+  };
 
-  // Scroll-driven horizontal translate
-  const stage = document.querySelector(".stage");
-  const sticky = document.getElementById("sticky");
-  function updateTrack() {
-    const rect = stage.getBoundingClientRect();
-    const scrollTop = Math.min(Math.max(-rect.top, 0), rect.height - window.innerHeight);
-    const progress = scrollTop / (rect.height - window.innerHeight);
-    const totalWidth = TRACK.scrollWidth - sticky.clientWidth;
-    const x = Math.round(totalWidth * progress);
-    TRACK.style.transform = `translateX(${-x}px)`;
-  }
-  window.addEventListener("scroll", updateTrack, { passive: true });
-  window.addEventListener("resize", updateTrack);
-  updateTrack();
+  const base = {
+    id: 8453,
+    name: "Base",
+    network: "base",
+    nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+    rpcUrls: { default: { http: ["https://mainnet.base.org"] } },
+    blockExplorers: { default: { name: "Basescan", url: "https://basescan.org" } }
+  };
 
-  // Web3Modal v3 Setup
-  (async () => {
-    const { mainnet, base } = window.viem.chains;
-    const projectId = "YOUR_WALLETCONNECT_PROJECT_ID";
-    if (!window.wagmi || !window.Web3ModalWagmi) return console.error("Web3Modal or wagmi not loaded.");
+  const chains = [mainnet, base];
 
-    const { createConfig } = window.wagmi;
-    const { reconnect, watchAccount } = window.wagmi.actions;
-    const { defaultWagmiConfig, EthereumClient, Web3Modal } = window.Web3ModalWagmi;
-    const chains = [mainnet, base];
+  // Replace this with your real WalletConnect Project ID:
+  const projectId = "YOUR_WALLETCONNECT_PROJECT_ID";
 
-    const wagmiConfig = createConfig(defaultWagmiConfig({
+  const { createConfig } = window.wagmi;
+  const { defaultWagmiConfig, EthereumClient, Web3Modal } = window.Web3ModalWagmi;
+
+  const wagmiConfig = createConfig(
+    defaultWagmiConfig({
       chains,
       projectId,
       metadata: {
         name: "Naïveté: Base Instincts",
         description: "Broken is beautiful — build your face.",
         url: window.location.href,
-        icons: ["image.png"]
-      }
-    }));
+        icons: ["image.png"],
+      },
+    })
+  );
 
-    const ethereumClient = new EthereumClient(wagmiConfig, chains);
-    const modal = new Web3Modal({
-      projectId,
-      themeMode: "dark",
-      themeVariables: { "--w3m-accent-color": "#ff6ad5" },
-      ethereumClient
-    });
+  const ethereumClient = new EthereumClient(wagmiConfig, chains);
+  const modal = new Web3Modal({
+    projectId,
+    themeMode: "dark",
+    themeVariables: { "--w3m-accent-color": "#ff6ad5" },
+    ethereumClient,
+  });
 
-    const connectBtn = document.getElementById("connect");
-    reconnect(wagmiConfig);
+  const connectBtn = document.getElementById("connect");
 
-    connectBtn.addEventListener("click", async () => {
-      try { await modal.openModal(); } 
-      catch (e) { console.error("Wallet connect failed", e); }
-    });
-
-    watchAccount(wagmiConfig, {
-      onChange(account) {
-        connectBtn.textContent = account?.address
-          ? account.address.slice(0,6) + "..." + account.address.slice(-4)
-          : "Connect Wallet";
-      }
-    });
-  })();
+  connectBtn.addEventListener("click", async () => {
+    try {
+      await modal.openModal();
+    } catch (e) {
+      console.error("Wallet connect failed", e);
+    }
+  });
+})();
 </script>
 </body>
 </html>
