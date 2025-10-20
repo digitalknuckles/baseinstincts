@@ -89,8 +89,80 @@ width:var(--card-w);height:var(--card-h);flex:0 0 auto;background:linear-gradien
 </div>
 </div>
 </section>
+<script src="https://unpkg.com/ethers@6.8.0/dist/ethers.min.js"></script>
+<script src="https://unpkg.com/@web3modal/wagmi@3.6.4/dist/index.umd.js"></script>
+<script src="https://unpkg.com/@wagmi/core@2.8.4/dist/index.umd.js"></script>
+<script src="https://unpkg.com/viem@2.19.5/dist/viem.umd.js"></script>
+<script>
+  (async () => {
+    const { mainnet, base } = window.wagmiChains
+      ? window.wagmiChains
+      : window.wagmi.chains;
 
+    // Replace this with your real WalletConnect Project ID:
+    const projectId = "YOUR_WALLETCONNECT_PROJECT_ID";
 
+    // Ensure required libs are loaded
+    if (!window.wagmi || !window.Web3ModalWagmi) {
+      console.error("Web3Modal or wagmi not loaded properly from CDN.");
+      return;
+    }
+
+    // Wagmi + Web3Modal setup
+    const { createConfig, http } = window.wagmi;
+    const { reconnect, getAccount, watchAccount, connect, disconnect } = window.wagmi.actions;
+    const { defaultWagmiConfig } = window.Web3ModalWagmi;
+    const { EthereumClient, w3mConnectors, w3mProvider } = window.Web3ModalWagmi;
+    const chains = [mainnet, base]; // you can customize networks
+
+    const wagmiConfig = createConfig(
+      defaultWagmiConfig({
+        chains,
+        projectId,
+        metadata: {
+          name: "Naïveté: Base Instincts",
+          description: "Broken is beautiful — build your face.",
+          url: window.location.href,
+          icons: ["image.png"],
+        },
+      })
+    );
+
+    const ethereumClient = new EthereumClient(wagmiConfig, chains);
+    const modal = new window.Web3ModalWagmi.Web3Modal({
+      projectId,
+      themeMode: "dark",
+      themeVariables: { "--w3m-accent-color": "#ff6ad5" },
+      ethereumClient,
+    });
+
+    const connectBtn = document.getElementById("connect");
+
+    // Try to reconnect session
+    reconnect(wagmiConfig);
+
+    // Event listener for connection
+    connectBtn.addEventListener("click", async () => {
+      try {
+        await modal.openModal(); // opens Web3Modal UI
+      } catch (e) {
+        console.error("Wallet connect failed", e);
+      }
+    });
+
+    // Auto-update button text
+    watchAccount(wagmiConfig, {
+      onChange(account) {
+        if (account && account.address) {
+          connectBtn.textContent =
+            account.address.slice(0, 6) + "..." + account.address.slice(-4);
+        } else {
+          connectBtn.textContent = "Connect Wallet";
+        }
+      },
+    });
+  })();
+</script>
 <section class="footer">
 <div class="controls">
 </html>
