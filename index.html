@@ -73,50 +73,42 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 </div>
 
 <!-- Web3 + Ethers imports -->
+<!-- Ethers v5 -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 
-<script src="https://unpkg.com/@walletconnect/web3modal@2.7.1/dist/index.umd.js"></script>
-<script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.2/dist/index.umd.js"></script>
-
+<!-- Web3Modal v1 + WalletConnect v1 -->
+<script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
+<script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
 
 <script>
 (async () => {
-  const projectId = "15da3c431a74b29edb63198a503d45b5"; // 👈 Replace this
+  const providerOptions = {
+    walletconnect: {
+      package: window.WalletConnectProvider.default,
+      options: {
+        infuraId: "YOUR_INFURA_ID" // or RPCs
+      }
+    }
+  };
 
-  // WalletConnect v2 provider
-  const provider = await window.WalletConnectProvider.init({
-    projectId,
-    chains: [1, 8453], // Ethereum Mainnet, Base
-    showQrModal: true,
-    qrModalOptions: {
-      themeMode: "dark",
-    },
+  const web3Modal = new window.Web3Modal.default({
+    cacheProvider: false,
+    providerOptions
   });
 
   const connectBtn = document.getElementById("connect");
-  let ethersProvider;
+  let provider, ethersProvider;
 
   connectBtn.addEventListener("click", async () => {
     try {
-      await provider.connect();
-
-      // Wrap with ethers.js
+      provider = await web3Modal.connect();
       ethersProvider = new ethers.providers.Web3Provider(provider);
       const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
-
-      // Update UI
       connectBtn.textContent = address.slice(0, 6) + "..." + address.slice(-4);
-      console.log("Connected to:", address);
     } catch (err) {
-      console.error("Connection failed:", err);
+      console.error(err);
     }
-  });
-
-  // Handle disconnection gracefully
-  provider.on("disconnect", () => {
-    connectBtn.textContent = "Connect Wallet";
-    console.log("Disconnected");
   });
 })();
 </script>
