@@ -74,68 +74,49 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 
 <!-- Web3 + Ethers imports -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://unpkg.com/@wagmi/core@2.8.4/dist/index.umd.js"></script>
-<script src="https://unpkg.com/@web3modal/wagmi@3.6.4/dist/index.umd.js"></script>
-<script src="https://unpkg.com/viem@2.19.5/dist/viem.umd.js"></script>
+
+<script src="https://unpkg.com/@walletconnect/web3modal@2.7.1/dist/index.umd.js"></script>
+<script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.2/dist/index.umd.js"></script>
+
 
 <script>
 (async () => {
-  // ✅ Define chains manually (since UMD doesn't export them automatically)
-  const mainnet = {
-    id: 1,
-    name: "Ethereum Mainnet",
-    network: "mainnet",
-    nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-    rpcUrls: { default: { http: ["https://rpc.ankr.com/eth"] } },
-    blockExplorers: { default: { name: "Etherscan", url: "https://etherscan.io" } }
-  };
+  const projectId = "YOUR_WALLETCONNECT_PROJECT_ID"; // 👈 Replace this
 
-  const base = {
-    id: 8453,
-    name: "Base",
-    network: "base",
-    nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-    rpcUrls: { default: { http: ["https://mainnet.base.org"] } },
-    blockExplorers: { default: { name: "Basescan", url: "https://basescan.org" } }
-  };
-
-  const chains = [mainnet, base];
-
-  // Replace this with your real WalletConnect Project ID:
-  const projectId = "YOUR_WALLETCONNECT_PROJECT_ID";
-
-  const { createConfig } = window.wagmi;
-  const { defaultWagmiConfig, EthereumClient, Web3Modal } = window.Web3ModalWagmi;
-
-  const wagmiConfig = createConfig(
-    defaultWagmiConfig({
-      chains,
-      projectId,
-      metadata: {
-        name: "Naïveté: Base Instincts",
-        description: "Broken is beautiful — build your face.",
-        url: window.location.href,
-        icons: ["image.png"],
-      },
-    })
-  );
-
-  const ethereumClient = new EthereumClient(wagmiConfig, chains);
-  const modal = new Web3Modal({
+  // WalletConnect v2 provider
+  const provider = await window.WalletConnectProvider.init({
     projectId,
-    themeMode: "dark",
-    themeVariables: { "--w3m-accent-color": "#ff6ad5" },
-    ethereumClient,
+    chains: [1, 8453], // Ethereum Mainnet, Base
+    showQrModal: true,
+    qrModalOptions: {
+      themeMode: "dark",
+    },
   });
 
   const connectBtn = document.getElementById("connect");
+  let ethersProvider;
 
   connectBtn.addEventListener("click", async () => {
     try {
-      await modal.openModal();
-    } catch (e) {
-      console.error("Wallet connect failed", e);
+      await provider.connect();
+
+      // Wrap with ethers.js
+      ethersProvider = new ethers.providers.Web3Provider(provider);
+      const signer = ethersProvider.getSigner();
+      const address = await signer.getAddress();
+
+      // Update UI
+      connectBtn.textContent = address.slice(0, 6) + "..." + address.slice(-4);
+      console.log("Connected to:", address);
+    } catch (err) {
+      console.error("Connection failed:", err);
     }
+  });
+
+  // Handle disconnection gracefully
+  provider.on("disconnect", () => {
+    connectBtn.textContent = "Connect Wallet";
+    console.log("Disconnected");
   });
 })();
 </script>
