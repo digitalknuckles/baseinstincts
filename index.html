@@ -56,7 +56,7 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 #rulebook-overlay{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.9);
+    background:rgba(0,0,0,0.95);
     z-index:999;
     display:none;
     flex-direction:column;
@@ -68,7 +68,7 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
     position:absolute;
     top:1rem;
     right:1rem;
-    font-size:1.5rem;
+    font-size:2rem;
     font-weight:bold;
     color:#fff;
     cursor:pointer;
@@ -92,7 +92,8 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
     box-shadow: 0 15px 35px rgba(0,0,0,0.35);
 }
 .highlight{background:#fcd34d;color:#111;font-weight:bold;padding:0.1em 0.3em;border-radius:0.25rem;}
-.grid-cell{width:60px;height:60px;border:2px dashed #fff;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);color:#fff;font-weight:bold;}
+.grid-cell{width:60px;height:60px;border:2px dashed #fff;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);color:#fff;font-weight:bold;transition:0.3s;}
+.grid-cell:hover{background:rgba(252,211,77,0.6);transform:scale(1.1);}
 .swiper {padding:2rem 0;}
 .swiper-slide {width:320px;}
 </style>
@@ -133,21 +134,25 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
     <span class="rulebook-close" id="close-rulebook">&times;</span>
     <div class="swiper myRulebookSwiper">
         <div class="swiper-wrapper">
-            <!-- Tutorial cards go here -->
-            <div class="swiper-slide tutorial-card">
+            <!-- Interactive Tutorial Cards -->
+            <div class="swiper-slide tutorial-card" data-step="1">
                 <h2 class="text-2xl font-semibold mb-2">Welcome</h2>
                 <p>This tutorial teaches <span class="highlight">setup, turn actions, pipelines, duels, and item capture</span> in sequence.</p>
                 <div class="mt-2 text-center text-white/70 italic">"Your tactical instincts await!"</div>
+                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-            <div class="swiper-slide tutorial-card">
+
+            <div class="swiper-slide tutorial-card" data-step="2">
                 <h2 class="text-2xl font-semibold mb-2">Step 1: Game Setup</h2>
                 <ul class="list-disc ml-5">
                     <li>Select an <span class="highlight">Avatar</span> from the deck.</li>
                     <li>Place your <span class="highlight">Item(s)</span> behind the Avatar.</li>
                     <li>Shuffle the deck and draw <span class="highlight">3 cards</span> (Player 1 gets +1 card).</li>
                 </ul>
+                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-            <div class="swiper-slide tutorial-card">
+
+            <div class="swiper-slide tutorial-card" data-step="3">
                 <h2 class="text-2xl font-semibold mb-2">Step 2: Turn Actions</h2>
                 <ul class="list-disc ml-5">
                     <li><span class="highlight">Place a Limb card</span> connecting to your Avatar or pipeline.</li>
@@ -155,18 +160,32 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
                     <li>Rotate 180° (costs an action).</li>
                     <li>Bonus action if you <span class="highlight">win a duel</span>.</li>
                 </ul>
+                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-            <div class="swiper-slide tutorial-card">
+
+            <div class="swiper-slide tutorial-card" data-step="4">
                 <h2 class="text-2xl font-semibold mb-2">Step 3: Pipelines</h2>
-                <p>Each Avatar has <span class="highlight">two pipelines</span>. Chains must be continuous and not branch.</p>
+                <p>Each Avatar has <span class="highlight animate-pulse">two pipelines</span>. Chains must be continuous and not branch.</p>
+                <div class="mt-4 grid grid-cols-5 gap-1 cursor-pointer">
+                    <div class="grid-cell">A</div>
+                    <div class="grid-cell">S</div>
+                    <div class="grid-cell">L</div>
+                    <div class="grid-cell">R</div>
+                    <div class="grid-cell">I</div>
+                </div>
+                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-            <div class="swiper-slide tutorial-card">
+
+            <div class="swiper-slide tutorial-card" data-step="5">
                 <h2 class="text-2xl font-semibold mb-2">Step 4: Dueling</h2>
                 <p>Rock/Paper/Scissors mechanic triggers on collisions. Max <span class="highlight">3 exchanges</span>. Winner gains bonus action.</p>
+                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-            <div class="swiper-slide tutorial-card">
+
+            <div class="swiper-slide tutorial-card" data-step="6">
                 <h2 class="text-2xl font-semibold mb-2">Step 5: Item Capture</h2>
                 <p>Reach an Item, initiate a duel, and capture it to end the round.</p>
+                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
         </div>
         <div class="swiper-pagination mt-4"></div>
@@ -218,7 +237,13 @@ const rulebookSwiper = new Swiper(".myRulebookSwiper", {
     coverflowEffect: { rotate: 30, stretch: 10, depth: 150, modifier: 1, slideShadows: true },
     pagination: { el: ".swiper-pagination", clickable: true }
 });
-</script>
 
+// Next Step Buttons
+document.querySelectorAll('.next-step').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        rulebookSwiper.slideNext();
+    });
+});
+</script>
 </body>
 </html>
