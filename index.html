@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#ff6ad5" />
 <title>Naïveté © : Base Instincts</title>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- SwiperJS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
 <style>
 :root{
   --bg-overlay: rgba(0,0,0,0.35);
@@ -25,7 +33,7 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 .header{display:flex;align-items:center;justify-content:space-between;padding:14px 6vw}
 .title{font-weight:700;font-size:16px;letter-spacing:0.6px}
 .subtitle{font-size:11px;opacity:0.9}
-.connect-btn{background:linear-gradient(90deg,var(--accent),#ffd36a);border:none;padding:8px 12px;border-radius:999px;font-weight:600;color:#000}
+.connect-btn, #show-rulebook{background:linear-gradient(90deg,var(--accent),#ffd36a);border:none;padding:8px 12px;border-radius:999px;font-weight:600;color:#000;cursor:pointer}
 
 /* scroll stage */
 .stage{height:220vh;position:relative}
@@ -41,7 +49,52 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 .controls{display:flex;gap:8px}
 .chip{background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:999px;font-size:13px}
 .card:active{transform:scale(.995)}
+
 @media (min-width:700px){:root{--card-w:56vw;--card-h:36vw}}
+
+/* Rulebook Overlay */
+#rulebook-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.9);
+    z-index:999;
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:2rem;
+}
+.rulebook-close{
+    position:absolute;
+    top:1rem;
+    right:1rem;
+    font-size:1.5rem;
+    font-weight:bold;
+    color:#fff;
+    cursor:pointer;
+}
+
+/* Swiper Tutorial */
+.tutorial-card{
+    background: rgba(255,255,255,0.95);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    padding: 2rem;
+    min-height: 300px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    color:#111;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.tutorial-card:hover{
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+.highlight{background:#fcd34d;color:#111;font-weight:bold;padding:0.1em 0.3em;border-radius:0.25rem;}
+.grid-cell{width:60px;height:60px;border:2px dashed #fff;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.2);color:#fff;font-weight:bold;}
+.swiper {padding:2rem 0;}
+.swiper-slide {width:320px;}
 </style>
 </head>
 <body>
@@ -52,7 +105,10 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
       <div class="title">Naïveté: Base Instincts</div>
       <div class="subtitle">Broken is beautiful — build your face.</div>
     </div>
-    <div><button id="connect" class="connect-btn">Connect Wallet</button></div>
+    <div class="flex gap-2">
+      <button id="connect" class="connect-btn">Connect Wallet</button>
+      <button id="show-rulebook" class="connect-btn">Show Rulebook</button>
+    </div>
   </header>
 
   <main>
@@ -72,33 +128,68 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
   </main>
 </div>
 
-<!-- Web3 + Ethers imports -->
-<!-- Ethers v5 -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<!-- Rulebook Overlay -->
+<div id="rulebook-overlay" class="flex">
+    <span class="rulebook-close" id="close-rulebook">&times;</span>
+    <div class="swiper myRulebookSwiper">
+        <div class="swiper-wrapper">
+            <!-- Tutorial cards go here -->
+            <div class="swiper-slide tutorial-card">
+                <h2 class="text-2xl font-semibold mb-2">Welcome</h2>
+                <p>This tutorial teaches <span class="highlight">setup, turn actions, pipelines, duels, and item capture</span> in sequence.</p>
+                <div class="mt-2 text-center text-white/70 italic">"Your tactical instincts await!"</div>
+            </div>
+            <div class="swiper-slide tutorial-card">
+                <h2 class="text-2xl font-semibold mb-2">Step 1: Game Setup</h2>
+                <ul class="list-disc ml-5">
+                    <li>Select an <span class="highlight">Avatar</span> from the deck.</li>
+                    <li>Place your <span class="highlight">Item(s)</span> behind the Avatar.</li>
+                    <li>Shuffle the deck and draw <span class="highlight">3 cards</span> (Player 1 gets +1 card).</li>
+                </ul>
+            </div>
+            <div class="swiper-slide tutorial-card">
+                <h2 class="text-2xl font-semibold mb-2">Step 2: Turn Actions</h2>
+                <ul class="list-disc ml-5">
+                    <li><span class="highlight">Place a Limb card</span> connecting to your Avatar or pipeline.</li>
+                    <li>Draw 1 card (hand max 5).</li>
+                    <li>Rotate 180° (costs an action).</li>
+                    <li>Bonus action if you <span class="highlight">win a duel</span>.</li>
+                </ul>
+            </div>
+            <div class="swiper-slide tutorial-card">
+                <h2 class="text-2xl font-semibold mb-2">Step 3: Pipelines</h2>
+                <p>Each Avatar has <span class="highlight">two pipelines</span>. Chains must be continuous and not branch.</p>
+            </div>
+            <div class="swiper-slide tutorial-card">
+                <h2 class="text-2xl font-semibold mb-2">Step 4: Dueling</h2>
+                <p>Rock/Paper/Scissors mechanic triggers on collisions. Max <span class="highlight">3 exchanges</span>. Winner gains bonus action.</p>
+            </div>
+            <div class="swiper-slide tutorial-card">
+                <h2 class="text-2xl font-semibold mb-2">Step 5: Item Capture</h2>
+                <p>Reach an Item, initiate a duel, and capture it to end the round.</p>
+            </div>
+        </div>
+        <div class="swiper-pagination mt-4"></div>
+    </div>
+</div>
 
-<!-- Web3Modal v1 + WalletConnect v1 -->
+<!-- Web3 + Ethers -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
 <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
 
 <script>
+// Web3 Connect Logic
 (async () => {
   const providerOptions = {
     walletconnect: {
       package: window.WalletConnectProvider.default,
-      options: {
-        infuraId: "YOUR_INFURA_ID" // or RPCs
-      }
+      options: { infuraId: "YOUR_INFURA_ID" }
     }
   };
-
-  const web3Modal = new window.Web3Modal.default({
-    cacheProvider: false,
-    providerOptions
-  });
-
+  const web3Modal = new window.Web3Modal.default({ cacheProvider: false, providerOptions });
   const connectBtn = document.getElementById("connect");
   let provider, ethersProvider;
-
   connectBtn.addEventListener("click", async () => {
     try {
       provider = await web3Modal.connect();
@@ -106,11 +197,28 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
       const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
       connectBtn.textContent = address.slice(0, 6) + "..." + address.slice(-4);
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
   });
 })();
+
+// Rulebook Overlay Logic
+const showBtn = document.getElementById("show-rulebook");
+const overlay = document.getElementById("rulebook-overlay");
+const closeBtn = document.getElementById("close-rulebook");
+
+showBtn.addEventListener("click", () => overlay.style.display = "flex");
+closeBtn.addEventListener("click", () => overlay.style.display = "none");
+
+// Initialize Swiper for Rulebook
+const rulebookSwiper = new Swiper(".myRulebookSwiper", {
+    effect: 'coverflow',
+    grabCursor: true,
+    centeredSlides: true,
+    slidesPerView: 'auto',
+    coverflowEffect: { rotate: 30, stretch: 10, depth: 150, modifier: 1, slideShadows: true },
+    pagination: { el: ".swiper-pagination", clickable: true }
+});
 </script>
+
 </body>
 </html>
