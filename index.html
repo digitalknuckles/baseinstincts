@@ -17,14 +17,11 @@
 :root{
   --bg-overlay: rgba(0,0,0,0.35);
   --accent: #ff6ad5;
-  --card-w: 84vw;
-  --card-h: 56vw;
-  --gutter: 8vw;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: 'Segoe UI', sans-serif;
 }
-html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing:antialiased}
+html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing:antialiased;}
 
-/* background image */
+/* landing page background */
 .bg{position:fixed;inset:0;background:center/cover no-repeat url('image.png');filter:contrast(1.03) saturate(1.15);z-index:0;}
 .bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));}
 
@@ -38,9 +35,9 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 /* scroll stage */
 .stage{height:220vh;position:relative}
 .sticky{position:sticky;top:12vh;height:76vh;display:flex;align-items:center;overflow:hidden}
-.track{display:flex;gap:calc(var(--gutter));align-items:center;padding-left:6vw;padding-right:6vw;transition:transform 240ms cubic-bezier(.22,.9,.36,1)}
+.track{display:flex;gap:8vw;align-items:center;padding-left:6vw;padding-right:6vw;transition:transform 240ms cubic-bezier(.22,.9,.36,1)}
 
-.card{width:var(--card-w);height:var(--card-h);flex:0 0 auto;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));backdrop-filter:blur(6px);border-radius:18px;box-shadow:0 6px 20px rgba(0,0,0,0.45);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.card{width:84vw;height:56vw;flex:0 0 auto;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));backdrop-filter:blur(6px);border-radius:1.5rem;box-shadow:0 10px 25px rgba(0,0,0,0.25);position:relative;overflow:hidden;display:flex;flex-direction:column}
 .card img{width:100%;height:auto;display:block}
 .card .meta{padding:10px 12px;font-size:13px}
 .card .name{font-weight:700}
@@ -50,13 +47,13 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
 .chip{background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:999px;font-size:13px}
 .card:active{transform:scale(.995)}
 
-@media (min-width:700px){:root{--card-w:56vw;--card-h:36vw}}
+@media (min-width:700px){.card{width:56vw;height:36vw;}}
 
 /* Rulebook Overlay */
 #rulebook-overlay{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.95);
+    background:linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #a1c4fd 100%);
     z-index:999;
     display:none;
     flex-direction:column;
@@ -70,13 +67,13 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
     right:1rem;
     font-size:2rem;
     font-weight:bold;
-    color:#fff;
+    color:#111;
     cursor:pointer;
 }
 
-/* Swiper Tutorial */
+/* Tutorial cards */
 .tutorial-card{
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 1.5rem;
     box-shadow: 0 10px 25px rgba(0,0,0,0.25);
     padding: 2rem;
@@ -134,38 +131,31 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
     <span class="rulebook-close" id="close-rulebook">&times;</span>
     <div class="swiper myRulebookSwiper">
         <div class="swiper-wrapper">
-            <!-- Interactive Tutorial Cards -->
-            <div class="swiper-slide tutorial-card" data-step="1">
+            <!-- Tutorial Cards (same as interactive style) -->
+            <div class="swiper-slide tutorial-card">
                 <h2 class="text-2xl font-semibold mb-2">Welcome</h2>
-                <p>This tutorial teaches <span class="highlight">setup, turn actions, pipelines, duels, and item capture</span> in sequence.</p>
-                <div class="mt-2 text-center text-white/70 italic">"Your tactical instincts await!"</div>
-                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
+                <p>Learn <span class="highlight">setup, turn actions, pipelines, duels, and item capture</span> step by step.</p>
             </div>
-
-            <div class="swiper-slide tutorial-card" data-step="2">
+            <div class="swiper-slide tutorial-card">
                 <h2 class="text-2xl font-semibold mb-2">Step 1: Game Setup</h2>
                 <ul class="list-disc ml-5">
-                    <li>Select an <span class="highlight">Avatar</span> from the deck.</li>
-                    <li>Place your <span class="highlight">Item(s)</span> behind the Avatar.</li>
-                    <li>Shuffle the deck and draw <span class="highlight">3 cards</span> (Player 1 gets +1 card).</li>
+                    <li>Select <span class="highlight">Avatar</span></li>
+                    <li>Place <span class="highlight">Item(s)</span> behind Avatar</li>
+                    <li>Draw <span class="highlight">3 cards</span> (Player 1 gets +1)</li>
                 </ul>
-                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-
-            <div class="swiper-slide tutorial-card" data-step="3">
+            <div class="swiper-slide tutorial-card">
                 <h2 class="text-2xl font-semibold mb-2">Step 2: Turn Actions</h2>
                 <ul class="list-disc ml-5">
-                    <li><span class="highlight">Place a Limb card</span> connecting to your Avatar or pipeline.</li>
-                    <li>Draw 1 card (hand max 5).</li>
-                    <li>Rotate 180° (costs an action).</li>
-                    <li>Bonus action if you <span class="highlight">win a duel</span>.</li>
+                    <li><span class="highlight">Place Limb</span> connecting to Avatar or pipeline</li>
+                    <li>Draw 1 card (hand max 5)</li>
+                    <li>Rotate Limb 180° (counts as action)</li>
+                    <li>Bonus action if <span class="highlight">win a duel</span></li>
                 </ul>
-                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-
-            <div class="swiper-slide tutorial-card" data-step="4">
+            <div class="swiper-slide tutorial-card">
                 <h2 class="text-2xl font-semibold mb-2">Step 3: Pipelines</h2>
-                <p>Each Avatar has <span class="highlight animate-pulse">two pipelines</span>. Chains must be continuous and not branch.</p>
+                <p>Each Avatar has <span class="highlight">two pipelines</span>. Chains must be continuous and not branch.</p>
                 <div class="mt-4 grid grid-cols-5 gap-1 cursor-pointer">
                     <div class="grid-cell">A</div>
                     <div class="grid-cell">S</div>
@@ -173,32 +163,27 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
                     <div class="grid-cell">R</div>
                     <div class="grid-cell">I</div>
                 </div>
-                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
             </div>
-
-            <div class="swiper-slide tutorial-card" data-step="5">
+            <div class="swiper-slide tutorial-card">
                 <h2 class="text-2xl font-semibold mb-2">Step 4: Dueling</h2>
-                <p>Rock/Paper/Scissors mechanic triggers on collisions. Max <span class="highlight">3 exchanges</span>. Winner gains bonus action.</p>
-                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
+                <p>Collisions trigger <span class="highlight">R/P/S duels</span>. Max 3 exchanges. Winner gains bonus action.</p>
             </div>
-
-            <div class="swiper-slide tutorial-card" data-step="6">
+            <div class="swiper-slide tutorial-card">
                 <h2 class="text-2xl font-semibold mb-2">Step 5: Item Capture</h2>
-                <p>Reach an Item, initiate a duel, and capture it to end the round.</p>
-                <div class="mt-4 flex justify-end"><button class="bg-accent px-4 py-2 rounded text-black next-step">Next</button></div>
+                <p>Reach an Item, duel, capture to win the round.</p>
             </div>
         </div>
         <div class="swiper-pagination mt-4"></div>
     </div>
 </div>
 
-<!-- Web3 + Ethers -->
+<!-- Web3 + Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
 <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
 
 <script>
-// Web3 Connect Logic
+// Web3 Connect
 (async () => {
   const providerOptions = {
     walletconnect: {
@@ -220,15 +205,14 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
   });
 })();
 
-// Rulebook Overlay Logic
+// Rulebook Overlay
 const showBtn = document.getElementById("show-rulebook");
 const overlay = document.getElementById("rulebook-overlay");
 const closeBtn = document.getElementById("close-rulebook");
-
 showBtn.addEventListener("click", () => overlay.style.display = "flex");
 closeBtn.addEventListener("click", () => overlay.style.display = "none");
 
-// Initialize Swiper for Rulebook
+// Swiper
 const rulebookSwiper = new Swiper(".myRulebookSwiper", {
     effect: 'coverflow',
     grabCursor: true,
@@ -236,13 +220,6 @@ const rulebookSwiper = new Swiper(".myRulebookSwiper", {
     slidesPerView: 'auto',
     coverflowEffect: { rotate: 30, stretch: 10, depth: 150, modifier: 1, slideShadows: true },
     pagination: { el: ".swiper-pagination", clickable: true }
-});
-
-// Next Step Buttons
-document.querySelectorAll('.next-step').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        rulebookSwiper.slideNext();
-    });
 });
 </script>
 </body>
