@@ -52,13 +52,23 @@ class NaiveteRulebook extends HTMLElement {
       `,
 
       `
-      <h2>How to Play — Video Walkthrough</h2>
-      <div class="video-wrapper">
-        <iframe src="https://youtube.com/shorts/M6g_RdOoUoE?si=nm2eX4DaMYSz48PG"
-          frameborder="0"
-          allowfullscreen></iframe>
-      </div>
-      `,
+`
+<h2>How to Play — Video Walkthrough</h2>
+<div class="video-wrapper">
+  <iframe 
+    src="https://www.youtube.com/embed/M6g_RdOoUoE"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
+<p class="mt-2" style="opacity:.75; font-size:.9rem;">
+  If the video doesn't play: open in new tab → 
+  <a href="https://www.youtube.com/watch?v=M6g_RdOoUoE" target="_blank" style="color:#ffd36a;text-decoration:underline;">
+    Watch on YouTube
+  </a>
+</p>
+`,
 
       `
       <h2>Full Rulebook (Printable)</h2>
