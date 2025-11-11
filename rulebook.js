@@ -54,7 +54,7 @@ class NaiveteRulebook extends HTMLElement {
       `
       <h2>How to Play — Video Walkthrough</h2>
       <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/shorts/M6g_RdOoUoE"
+        <iframe src="https://youtube.com/shorts/M6g_RdOoUoE?si=nm2eX4DaMYSz48PG"
           frameborder="0"
           allowfullscreen></iframe>
       </div>
