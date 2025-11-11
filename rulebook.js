@@ -51,7 +51,6 @@ class NaiveteRulebook extends HTMLElement {
       <p>Territory matters — shape the field, shape the fight.</p>
       `,
 
-      `
 `
 <h2>How to Play — Video Walkthrough</h2>
 <div class="video-wrapper">
