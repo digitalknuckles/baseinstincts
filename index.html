@@ -9,7 +9,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-:root{
+:root {
   --bg-overlay: rgba(0,0,0,0.35);
   --accent: #ff6ad5;
   --card-w: 84vw;
@@ -17,28 +17,121 @@
   --gutter: 8vw;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
-html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing:antialiased}
+html,body {
+  height:100%;
+  margin:0;
+  background:#000;
+  color:#fff;
+  -webkit-font-smoothing:antialiased;
+}
 
 /* background */
-.bg{position:fixed;inset:0;background:center/cover no-repeat url('image.png');filter:contrast(1.03) saturate(1.15);}
-.bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));}
+.bg {
+  position:fixed;
+  inset:0;
+  background:center/cover no-repeat url('image.png');
+  filter:contrast(1.03) saturate(1.15);
+}
+.bg::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));
+}
 
 /* layout */
-.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
-.header{display:flex;align-items:center;justify-content:space-between;padding:14px 6vw}
-.title{font-weight:700;font-size:16px;letter-spacing:0.6px}
-.subtitle{font-size:11px;opacity:0.9}
-.connect-btn{background:linear-gradient(90deg,var(--accent),#ffd36a);border:none;padding:8px 12px;border-radius:999px;font-weight:600;color:#000;cursor:pointer}
-#show-rulebook{background:linear-gradient(90deg,#ffd36a,var(--accent));}
+.app { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column }
+.header { display:flex; align-items:center; justify-content:space-between; padding:14px 6vw }
+.title { font-weight:700; font-size:16px; letter-spacing:0.6px }
+.subtitle { font-size:11px; opacity:0.9 }
+.connect-btn {
+  background:linear-gradient(90deg,var(--accent),#ffd36a);
+  border:none;
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:600;
+  color:#000;
+  cursor:pointer;
+}
+#show-rulebook { background:linear-gradient(90deg,#ffd36a,var(--accent)); }
 
 /* scrolling display gallery */
-.stage{height:220vh;position:relative}
-.sticky{position:sticky;top:12vh;height:76vh;display:flex;align-items:center;overflow:hidden}
-.track{display:flex;gap:calc(var(--gutter));align-items:center;padding-left:6vw;padding-right:6vw;transition:transform 240ms cubic-bezier(.22,.9,.36,1)}
-.card{width:var(--card-w);height:var(--card-h);flex:0 0 auto;background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);border-radius:18px;box-shadow:0 6px 20px rgba(0,0,0,0.45);overflow:hidden}
-.footer{padding:18px 6vw 48px;display:flex;flex-direction:column;gap:10px}
-.controls{display:flex;gap:8px}
-.chip{background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:999px;font-size:13px}
+.stage { height:220vh; position:relative }
+.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:hidden }
+.track {
+  display:flex;
+  gap:calc(var(--gutter));
+  align-items:center;
+  padding-left:6vw;
+  padding-right:6vw;
+  transition:transform 240ms cubic-bezier(.22,.9,.36,1);
+}
+.card {
+  width:var(--card-w);
+  height:var(--card-h);
+  flex:0 0 auto;
+  position:relative;
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(255,255,255,0.05);
+  box-shadow:0 6px 20px rgba(0,0,0,0.45);
+  backdrop-filter:blur(8px);
+  transition:transform 0.4s ease, box-shadow 0.4s ease;
+}
+.card:hover {
+  transform:scale(1.03);
+  box-shadow:0 12px 40px rgba(0,0,0,0.6);
+}
+.card::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:var(--bg-overlay);
+}
+.card-content {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:20px;
+  z-index:2;
+}
+.card h3 {
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:10px;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.card button {
+  align-self:flex-start;
+  background:linear-gradient(90deg,var(--accent),#ffd36a);
+  color:#000;
+  border:none;
+  padding:8px 16px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:opacity 0.3s ease;
+}
+.card button:hover { opacity:0.8; }
+
+.footer {
+  padding:18px 6vw 48px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.controls { display:flex; gap:8px }
+.chip {
+  background:rgba(255,255,255,0.06);
+  padding:8px 10px;
+  border-radius:999px;
+  font-size:13px;
+}
 </style>
 </head>
 
@@ -64,7 +157,31 @@ html,body{height:100%;margin:0;background:#000;color:#fff;-webkit-font-smoothing
     <section class="stage">
       <div class="sticky" id="sticky">
         <div class="track" id="track">
-          <!-- dynamic card gallery content will generate here later -->
+
+          <!-- NFT Collection Card -->
+          <div class="card" style="background-image:url('https://i.seadn.io/gae/yqkakZl8tLB6aNn4R9D-ZxtqYXLdVikqTQkUURDl5IoeMRzhRT2zQEpDW2mtKhKqLp3Qk_QCQ4fCSh8R0G5lYHcexlD-KyX3UtEbPg?auto=format&w=1000'); background-size:cover; background-position:center;">
+            <div class="card-content">
+              <h3>NFT Collection</h3>
+              <button onclick="window.open('https://opensea.io/collection/naivete','_blank')">View on OpenSea</button>
+            </div>
+          </div>
+
+          <!-- Virtual Gallery Card -->
+          <div class="card" style="background-image:url('https://uploads.spatial.io/68f01f9a884893267eca2a70/cover.webp'); background-size:cover; background-position:center;">
+            <div class="card-content">
+              <h3>Virtual Gallery</h3>
+              <button onclick="window.open('https://www.spatial.io/s/Naivete-Base-Instincts-68f01f9a884893267eca2a70?share=2043180943931599241','_blank')">Enter Gallery</button>
+            </div>
+          </div>
+
+          <!-- Game Page Card -->
+          <div class="card" style="background-image:url('https://www.thegamecrafter.com/overlays/games/naivete-base-instincts.jpg'); background-size:cover; background-position:center;">
+            <div class="card-content">
+              <h3>Card Game</h3>
+              <button onclick="window.open('https://www.thegamecrafter.com/games/na%C3%AFvet%C3%A9:-base-instincts','_blank')">Play & Buy</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
