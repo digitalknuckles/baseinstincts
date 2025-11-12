@@ -12,8 +12,8 @@
 :root {
   --bg-overlay: rgba(0,0,0,0.35);
   --accent: #ff6ad5;
-  --card-w: 60vw; /* smaller card width */
-  --card-h: 38vw; /* smaller card height */
+  --card-w: 64vw;
+  --card-h: 42vw;
   --gutter: 6vw;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
@@ -23,6 +23,7 @@ html,body {
   background:#000;
   color:#fff;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
 }
 
 /* background */
@@ -33,9 +34,7 @@ html,body {
   filter:contrast(1.03) saturate(1.15);
 }
 .bg::after {
-  content:'';
-  position:absolute;
-  inset:0;
+  content:'';position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));
 }
 
@@ -55,17 +54,16 @@ html,body {
 }
 #show-rulebook { background:linear-gradient(90deg,#ffd36a,var(--accent)); }
 
-/* scrolling display gallery */
-.stage { height:180vh; position:relative }
-.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; justify-content:center; overflow:hidden }
+/* scroll gallery */
+.stage { height:240vh; position:relative }
+.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:hidden }
 .track {
   display:flex;
-  justify-content:center;
-  align-items:center;
   gap:calc(var(--gutter));
-  padding-left:6vw;
-  padding-right:6vw;
-  transition:transform 240ms cubic-bezier(.22,.9,.36,1);
+  align-items:center;
+  padding:0 6vw;
+  transform:translateX(0);
+  transition:transform 0.3s ease-out;
 }
 .card {
   width:var(--card-w);
@@ -77,6 +75,8 @@ html,body {
   background:rgba(255,255,255,0.05);
   box-shadow:0 6px 20px rgba(0,0,0,0.45);
   backdrop-filter:blur(8px);
+  background-size:cover;
+  background-position:center;
   transition:transform 0.4s ease, box-shadow 0.4s ease;
 }
 .card:hover {
@@ -126,7 +126,7 @@ html,body {
   flex-direction:column;
   gap:10px;
 }
-.controls { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.controls { display:flex; gap:8px }
 .chip {
   background:rgba(255,255,255,0.06);
   padding:8px 10px;
@@ -141,13 +141,11 @@ html,body {
 <div class="bg"></div>
 
 <div class="app">
-
   <header class="header">
     <div>
       <div class="title">Naïveté: Base Instincts</div>
       <div class="subtitle">Broken is beautiful — build your face.</div>
     </div>
-
     <div class="flex gap-2">
       <button id="connect" class="connect-btn">Connect Wallet</button>
       <button id="show-rulebook" class="connect-btn">Rulebook</button>
@@ -156,27 +154,27 @@ html,body {
 
   <main>
     <section class="stage">
-      <div class="sticky" id="sticky">
+      <div class="sticky">
         <div class="track" id="track">
 
-          <!-- NFT Collection Card -->
-          <div class="card" style="background-image:url('card1.png'); background-size:cover; background-position:center;">
+          <!-- NFT Collection -->
+          <div class="card" style="background-image:url('card1.png')">
             <div class="card-content">
               <h3>NFT Collection</h3>
               <button onclick="window.open('https://opensea.io/collection/naivete','_blank')">View on OpenSea</button>
             </div>
           </div>
 
-          <!-- Game Page Card (Centered focus) -->
-          <div class="card" style="background-image:url('card2.png'); background-size:cover; background-position:center;">
+          <!-- Game Page (center card) -->
+          <div class="card" style="background-image:url('card2.png')">
             <div class="card-content">
               <h3>Card Game</h3>
               <button onclick="window.open('https://www.thegamecrafter.com/games/na%C3%AFvet%C3%A9:-base-instincts','_blank')">Play & Buy</button>
             </div>
           </div>
 
-          <!-- Virtual Gallery Card -->
-          <div class="card" style="background-image:url('card3.png'); background-size:cover; background-position:center;">
+          <!-- Virtual Gallery -->
+          <div class="card" style="background-image:url('card3.png')">
             <div class="card-content">
               <h3>Virtual Gallery</h3>
               <button onclick="window.open('https://www.spatial.io/s/Naivete-Base-Instincts-68f01f9a884893267eca2a70?share=2043180943931599241','_blank')">Enter Gallery</button>
@@ -195,13 +193,12 @@ html,body {
       </div>
     </section>
   </main>
-
 </div>
 
-<!-- Import Modular Rulebook -->
+<!-- Rulebook -->
 <script type="module" src="rulebook.js"></script>
 
-<!-- Wallet / UI -->
+<!-- Wallet -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
 <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
@@ -229,6 +226,17 @@ connectBtn.addEventListener("click", async () => {
     const address = await signer.getAddress();
     connectBtn.textContent = address.slice(0,6) + "..." + address.slice(-4);
   } catch (err) { console.error(err); }
+});
+
+// Scroll-based carousel effect
+window.addEventListener("scroll", () => {
+  const track = document.getElementById("track");
+  const stage = document.querySelector(".stage");
+  const scrollY = window.scrollY - stage.offsetTop;
+  const maxScroll = stage.scrollHeight - window.innerHeight;
+  const scrollPercent = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+  const maxTranslate = track.scrollWidth - window.innerWidth;
+  track.style.transform = `translateX(-${scrollPercent * maxTranslate}px)`;
 });
 </script>
 
