@@ -12,9 +12,9 @@
 :root {
   --bg-overlay: rgba(0,0,0,0.35);
   --accent: #ff6ad5;
-  --card-w: 84vw;
-  --card-h: 56vw;
-  --gutter: 8vw;
+  --card-w: 60vw; /* smaller card width */
+  --card-h: 38vw; /* smaller card height */
+  --gutter: 6vw;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 html,body {
@@ -56,12 +56,13 @@ html,body {
 #show-rulebook { background:linear-gradient(90deg,#ffd36a,var(--accent)); }
 
 /* scrolling display gallery */
-.stage { height:220vh; position:relative }
-.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:hidden }
+.stage { height:180vh; position:relative }
+.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; justify-content:center; overflow:hidden }
 .track {
   display:flex;
-  gap:calc(var(--gutter));
+  justify-content:center;
   align-items:center;
+  gap:calc(var(--gutter));
   padding-left:6vw;
   padding-right:6vw;
   transition:transform 240ms cubic-bezier(.22,.9,.36,1);
@@ -79,7 +80,7 @@ html,body {
   transition:transform 0.4s ease, box-shadow 0.4s ease;
 }
 .card:hover {
-  transform:scale(1.03);
+  transform:scale(1.05);
   box-shadow:0 12px 40px rgba(0,0,0,0.6);
 }
 .card::after {
@@ -125,7 +126,7 @@ html,body {
   flex-direction:column;
   gap:10px;
 }
-.controls { display:flex; gap:8px }
+.controls { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
 .chip {
   background:rgba(255,255,255,0.06);
   padding:8px 10px;
@@ -159,26 +160,26 @@ html,body {
         <div class="track" id="track">
 
           <!-- NFT Collection Card -->
-          <div class="card" style="background-image:url('https://i.seadn.io/gae/yqkakZl8tLB6aNn4R9D-ZxtqYXLdVikqTQkUURDl5IoeMRzhRT2zQEpDW2mtKhKqLp3Qk_QCQ4fCSh8R0G5lYHcexlD-KyX3UtEbPg?auto=format&w=1000'); background-size:cover; background-position:center;">
+          <div class="card" style="background-image:url('card1.png'); background-size:cover; background-position:center;">
             <div class="card-content">
               <h3>NFT Collection</h3>
               <button onclick="window.open('https://opensea.io/collection/naivete','_blank')">View on OpenSea</button>
             </div>
           </div>
 
-          <!-- Virtual Gallery Card -->
-          <div class="card" style="background-image:url('https://uploads.spatial.io/68f01f9a884893267eca2a70/cover.webp'); background-size:cover; background-position:center;">
-            <div class="card-content">
-              <h3>Virtual Gallery</h3>
-              <button onclick="window.open('https://www.spatial.io/s/Naivete-Base-Instincts-68f01f9a884893267eca2a70?share=2043180943931599241','_blank')">Enter Gallery</button>
-            </div>
-          </div>
-
-          <!-- Game Page Card -->
-          <div class="card" style="background-image:url('https://www.thegamecrafter.com/overlays/games/naivete-base-instincts.jpg'); background-size:cover; background-position:center;">
+          <!-- Game Page Card (Centered focus) -->
+          <div class="card" style="background-image:url('card2.png'); background-size:cover; background-position:center;">
             <div class="card-content">
               <h3>Card Game</h3>
               <button onclick="window.open('https://www.thegamecrafter.com/games/na%C3%AFvet%C3%A9:-base-instincts','_blank')">Play & Buy</button>
+            </div>
+          </div>
+
+          <!-- Virtual Gallery Card -->
+          <div class="card" style="background-image:url('card3.png'); background-size:cover; background-position:center;">
+            <div class="card-content">
+              <h3>Virtual Gallery</h3>
+              <button onclick="window.open('https://www.spatial.io/s/Naivete-Base-Instincts-68f01f9a884893267eca2a70?share=2043180943931599241','_blank')">Enter Gallery</button>
             </div>
           </div>
 
