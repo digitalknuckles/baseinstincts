@@ -56,7 +56,7 @@ html,body {
 
 /* scroll gallery */
 .stage { height:240vh; position:relative }
-.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:hidden }
+.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:hidden; touch-action:pan-y; }
 .track {
   display:flex;
   gap:calc(var(--gutter));
@@ -64,6 +64,10 @@ html,body {
   padding:0 6vw;
   transform:translateX(0);
   transition:transform 0.3s ease-out;
+  cursor:grab;
+}
+.track:active {
+  cursor:grabbing;
 }
 .card {
   width:var(--card-w);
@@ -229,14 +233,60 @@ connectBtn.addEventListener("click", async () => {
 });
 
 // Scroll-based carousel effect
+const track = document.getElementById("track");
+const stage = document.querySelector(".stage");
+
 window.addEventListener("scroll", () => {
-  const track = document.getElementById("track");
-  const stage = document.querySelector(".stage");
   const scrollY = window.scrollY - stage.offsetTop;
   const maxScroll = stage.scrollHeight - window.innerHeight;
   const scrollPercent = Math.min(Math.max(scrollY / maxScroll, 0), 1);
   const maxTranslate = track.scrollWidth - window.innerWidth;
   track.style.transform = `translateX(-${scrollPercent * maxTranslate}px)`;
+});
+
+// Drag/Swipe support
+let isDown = false;
+let startX;
+let scrollLeft;
+
+track.addEventListener('mousedown', (e) => {
+  isDown = true;
+  track.classList.add('active');
+  startX = e.pageX - track.offsetLeft;
+  scrollLeft = track.scrollLeft;
+});
+
+track.addEventListener('mouseleave', () => {
+  isDown = false;
+  track.classList.remove('active');
+});
+
+track.addEventListener('mouseup', () => {
+  isDown = false;
+  track.classList.remove('active');
+});
+
+track.addEventListener('mousemove', (e) => {
+  if(!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - track.offsetLeft;
+  const walk = (x - startX) * 1.2;
+  track.scrollLeft = scrollLeft - walk;
+});
+
+// Touch events
+let touchStartX = 0;
+let touchScrollLeft = 0;
+
+track.addEventListener("touchstart", (e) => {
+  touchStartX = e.touches[0].pageX;
+  touchScrollLeft = track.scrollLeft;
+});
+
+track.addEventListener("touchmove", (e) => {
+  const x = e.touches[0].pageX;
+  const walk = (x - touchStartX) * 1.2;
+  track.scrollLeft = touchScrollLeft - walk;
 });
 </script>
 
