@@ -12,12 +12,19 @@
 :root {
   --bg-overlay: rgba(0,0,0,0.35);
   --accent: #ff6ad5;
-  --card-w: 64vw;
-  --card-h: 42vw;
+  --card-w: 60vw;
+  --card-h: 40vw;
   --gutter: 6vw;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
-html,body {
+@media (min-width: 768px) {
+  :root {
+    --card-w: 40vw;
+    --card-h: 26vw;
+  }
+}
+
+html, body {
   height:100%;
   margin:0;
   background:#000;
@@ -34,7 +41,9 @@ html,body {
   filter:contrast(1.03) saturate(1.15);
 }
 .bg::after {
-  content:'';position:absolute;inset:0;
+  content:'';
+  position:absolute;
+  inset:0;
   background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));
 }
 
@@ -56,19 +65,20 @@ html,body {
 
 /* scroll gallery */
 .stage { height:240vh; position:relative }
-.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:hidden; touch-action:pan-y; }
+.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:visible; touch-action:pan-y; }
 .track {
   display:flex;
-  gap:calc(var(--gutter));
+  gap:var(--gutter);
   align-items:center;
   padding:0 6vw;
-  transform:translateX(0);
-  transition:transform 0.3s ease-out;
+  overflow-x:auto;
+  scroll-behavior:smooth;
   cursor:grab;
+  -webkit-overflow-scrolling: touch;
 }
-.track:active {
-  cursor:grabbing;
-}
+.track::-webkit-scrollbar { display:none; }
+.track:active { cursor:grabbing; }
+
 .card {
   width:var(--card-w);
   height:var(--card-h);
@@ -249,45 +259,31 @@ let isDown = false;
 let startX;
 let scrollLeft;
 
-track.addEventListener('mousedown', (e) => {
+track.addEventListener('mousedown', e => {
   isDown = true;
-  track.classList.add('active');
   startX = e.pageX - track.offsetLeft;
   scrollLeft = track.scrollLeft;
 });
-
-track.addEventListener('mouseleave', () => {
-  isDown = false;
-  track.classList.remove('active');
-});
-
-track.addEventListener('mouseup', () => {
-  isDown = false;
-  track.classList.remove('active');
-});
-
-track.addEventListener('mousemove', (e) => {
+track.addEventListener('mouseleave', () => { isDown = false; });
+track.addEventListener('mouseup', () => { isDown = false; });
+track.addEventListener('mousemove', e => {
   if(!isDown) return;
   e.preventDefault();
   const x = e.pageX - track.offsetLeft;
-  const walk = (x - startX) * 1.2;
+  const walk = (x - startX) * 1.5;
   track.scrollLeft = scrollLeft - walk;
 });
 
 // Touch events
-let touchStartX = 0;
-let touchScrollLeft = 0;
-
-track.addEventListener("touchstart", (e) => {
-  touchStartX = e.touches[0].pageX;
-  touchScrollLeft = track.scrollLeft;
-});
-
-track.addEventListener("touchmove", (e) => {
+track.addEventListener("touchstart", e => {
+  startX = e.touches[0].pageX;
+  scrollLeft = track.scrollLeft;
+}, {passive:true});
+track.addEventListener("touchmove", e => {
   const x = e.touches[0].pageX;
-  const walk = (x - touchStartX) * 1.2;
-  track.scrollLeft = touchScrollLeft - walk;
-});
+  const walk = (x - startX) * 1.5;
+  track.scrollLeft = scrollLeft - walk;
+}, {passive:true});
 </script>
 
 </body>
