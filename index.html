@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#ff6ad5" />
 <title>Naïveté © : Base Instincts</title>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
@@ -292,11 +293,30 @@ document.getElementById("photo").onclick=()=>overlay.style.display="flex";
 overlay.onclick=e=>{ if(e.target===overlay) overlay.style.display="none"; };
 
 // flash
-document.getElementById("saveBtn").onclick=()=>{
-  const flash=document.getElementById("flash");
+document.getElementById("saveBtn").onclick = async () => {
+
+  const flash = document.getElementById("flash");
+
+  // trigger flash
   flash.classList.remove("flash-active");
   void flash.offsetWidth;
   flash.classList.add("flash-active");
+
+  // wait a tiny bit so flash "feels real"
+  await new Promise(res => setTimeout(res, 150));
+
+  const target = document.getElementById("overlayImageWrap");
+
+  const canvas = await html2canvas(target, {
+    backgroundColor: null,
+    useCORS: true,
+    scale: 2
+  });
+
+  const link = document.createElement("a");
+  link.download = "naivete-class-photo.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
 };
 
 // scroll effect
