@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#ff6ad5" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Naïveté © : Base Instincts</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -13,188 +12,103 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-/* ===== ORIGINAL STYLES ===== */
 :root {
-  --bg-overlay: rgba(0,0,0,0.35);
-  --accent: #ff6ad5;
-  --card-w: 60vw;
-  --card-h: 40vw;
-  --gutter: 6vw;
-  font-family: Inter, system-ui;
+  --accent:#ff6ad5;
+  --card-w:60vw;
+  --card-h:40vw;
 }
-@media (min-width: 768px) {
-  :root {
-    --card-w: 40vw;
-    --card-h: 26vw;
-  }
+@media (min-width:768px){
+  :root { --card-w:40vw; --card-h:26vw; }
 }
 
-html, body {
-  height:100%;
-  margin:0;
-  background:#000;
-  color:#fff;
-  overflow-x:hidden;
-}
+body { margin:0; background:#000; color:#fff; overflow-x:hidden; font-family:Inter; }
 
 /* background */
-.bg {
-  position:fixed;
-  inset:0;
-  background:center/cover no-repeat url('image.png');
-}
-.bg::after {
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));
-}
+.bg { position:fixed; inset:0; background:url('image.png') center/cover; }
+.bg::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.6)); }
 
-/* layout */
-.app { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column }
-.header { display:flex; align-items:center; justify-content:space-between; padding:14px 6vw }
+/* header */
+.header { display:flex; justify-content:space-between; padding:14px 6vw; }
 .connect-btn {
-  background:linear-gradient(90deg,var(--accent),#ffd36a);
-  border:none;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
   padding:8px 12px;
   border-radius:999px;
-  font-weight:600;
   color:#000;
   cursor:pointer;
 }
 
-/* gallery */
-.stage { height:240vh }
-.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center }
-.track {
-  display:flex;
-  gap:var(--gutter);
-  padding:0 6vw;
-  overflow-x:auto;
-}
-.track::-webkit-scrollbar { display:none; }
+/* blinking */
+.blink { animation:blink 1s infinite; }
+@keyframes blink { 50%{opacity:.3} }
+
+/* loading */
+.loading { opacity:.6; pointer-events:none; }
+
+/* scroll */
+.stage { height:240vh; }
+.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; }
+.track { display:flex; gap:6vw; padding:0 6vw; }
 
 /* cards */
 .card {
   width:var(--card-w);
   height:var(--card-h);
-  flex:0 0 auto;
-  position:relative;
   border-radius:18px;
   overflow:hidden;
+  position:relative;
   background-size:cover;
-  background-position:center;
 }
-.card::after {
-  content:'';
-  position:absolute;
-  inset:0;
-  background:var(--bg-overlay);
-}
+.card::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,.35); }
 .card-content {
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
   justify-content:flex-end;
   padding:20px;
-  z-index:2;
-}
-.card h3 {
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:10px;
-  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.card button {
-  background:linear-gradient(90deg,var(--accent),#ffd36a);
-  color:#000;
-  border:none;
-  padding:8px 16px;
-  border-radius:999px;
-  font-weight:600;
-  cursor:pointer;
 }
 
-/* ===== OVERLAY ===== */
+/* overlay */
 #nftOverlay {
   position:fixed; inset:0; display:none;
   justify-content:center; align-items:center;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(6px);
+  background:rgba(0,0,0,.9);
   z-index:9999;
 }
-
-#overlayBox {
-  width:400px;
-  max-width:90%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-}
-
-#overlayImageWrap {
-  position:relative;
-  width:100%;
-}
-
-#overlayImageWrap img {
-  width:100%;
-  border-radius:20px;
-}
-
+#overlayBox { width:400px; max-width:90%; text-align:center; }
+#overlayImageWrap { position:relative; }
+#overlayImageWrap img { width:100%; border-radius:20px; }
 #hud {
-  position:absolute;
-  inset:0;
-  background:url('https://ipfs.io/ipfs/bafybeiasnk6fhvqxc4eqnytyp42wsayqe477v7nlz6gipkmnf5ts2kel2q') center/cover no-repeat;
-  pointer-events:none;
-  border-radius:20px;
+  position:absolute; inset:0;
+  background:url('https://ipfs.io/ipfs/bafybeifmgmf2iec3htvgt3lqy6fghf5zfe76ews3invh2a4qclnbondwsq') center/cover;
 }
-
-#carousel {
-  display:flex;
-  overflow-x:auto;
-  gap:10px;
-}
-#carousel img {
-  width:60px;
-  height:60px;
-  border-radius:10px;
-  opacity:0.6;
-  cursor:pointer;
-}
-#carousel img.active {
-  opacity:1;
-  border:2px solid white;
-}
+#carousel { display:flex; gap:10px; overflow-x:auto; margin-top:10px; }
+#carousel img { width:60px; border-radius:10px; opacity:.5; cursor:pointer; }
+#carousel img.active { opacity:1; border:2px solid #fff; }
 
 #saveBtn {
+  margin-top:10px;
   background:linear-gradient(90deg,#ff6ad5,#ffd36a);
-  color:#000;
-  padding:8px 14px;
+  padding:8px;
   border-radius:999px;
-  cursor:pointer;
+  color:#000;
 }
 
-/* flash */
-#flash {
-  position:fixed;
-  inset:0;
-  background:white;
-  opacity:0;
-  pointer-events:none;
-  z-index:10000;
+/* splash */
+#splash {
+  position:fixed; inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.95);
+  z-index:9998;
+  flex-direction:column;
+  text-align:center;
+  animation:fadeIn .4s ease;
 }
-.flash-active {
-  animation:flashAnim 0.4s ease;
-}
-@keyframes flashAnim {
-  0% { opacity:1; }
-  100% { opacity:0; }
-}
+#splash.fade-out { animation:fadeOut .4s forwards; }
+
+@keyframes fadeIn { from{opacity:0; transform:scale(.95)} }
+@keyframes fadeOut { to{opacity:0; transform:scale(1.05)} }
+
 </style>
 </head>
 
@@ -202,13 +116,11 @@ html, body {
 
 <div class="bg"></div>
 
-<div class="app">
 <header class="header">
   <div>Naïveté: Base Instincts</div>
   <div class="flex gap-2">
-    <button id="connect" class="connect-btn">Connect Wallet</button>
+    <button id="connect" class="connect-btn blink">Connect Wallet</button>
     <button id="photo" class="connect-btn" disabled>Take Class Photo</button>
-    <button id="show-rulebook" class="connect-btn">Rulebook</button>
   </div>
 </header>
 
@@ -217,27 +129,24 @@ html, body {
 <div class="sticky">
 <div class="track" id="track">
 
-<!-- NFT Collection -->
 <div class="card" style="background-image:url('card1.png')">
   <div class="card-content">
     <h3>NFT Collection</h3>
-    <button onclick="window.open('https://opensea.io/collection/naivete','_blank')">View on OpenSea</button>
+    <button onclick="window.open('https://opensea.io/collection/naivete')">View</button>
   </div>
 </div>
 
-<!-- Game -->
 <div class="card" style="background-image:url('card2.png')">
   <div class="card-content">
     <h3>Card Game</h3>
-    <button onclick="window.open('https://www.thegamecrafter.com/games/na%C3%AFvet%C3%A9:-base-instincts','_blank')">Play & Buy</button>
+    <button onclick="window.open('https://www.thegamecrafter.com')">Play</button>
   </div>
 </div>
 
-<!-- Gallery -->
 <div class="card" style="background-image:url('card3.png')">
   <div class="card-content">
-    <h3>Virtual Gallery</h3>
-    <button onclick="window.open('https://www.spatial.io/s/Naivete-Base-Instincts-68f01f9a884893267eca2a70?share=2043180943931599241','_blank')">Enter Gallery</button>
+    <h3>Gallery</h3>
+    <button onclick="window.open('https://www.spatial.io')">Enter</button>
   </div>
 </div>
 
@@ -245,137 +154,151 @@ html, body {
 </div>
 </section>
 </main>
+
+<!-- splash -->
+<div id="splash">
+  <img src="https://ipfs.io/ipfs/bafybeibq4ndpj2w2sbuf6xl2t5zfggzeyshqwjvcwwrhetqvxzhxpf6pbi" style="width:280px;border-radius:16px;">
+  <div id="splashText" style="margin-top:16px;font-size:22px;"></div>
 </div>
 
-<div id="flash"></div>
-
-<!-- OVERLAY -->
+<!-- overlay -->
 <div id="nftOverlay">
   <div id="overlayBox">
     <div id="overlayImageWrap">
-      <img id="mainNFT" src="" />
+      <img id="mainNFT">
       <div id="hud"></div>
     </div>
     <div id="carousel"></div>
     <div id="saveBtn">📸 Save Class Photo</div>
   </div>
 </div>
-  
-<script type="module" src="rulebook.js"></script>
-  
-<script type="module">
-let userAddress=null;
-let nfts=[];
-let selected=0;
 
-// rulebook
-document.getElementById("show-rulebook").onclick = () => {
-  if (!document.querySelector("naivete-rulebook")) {
-    document.body.appendChild(document.createElement("naivete-rulebook"));
+<script>
+let userAddress=null,nfts=[],selected=0;
+
+const providerOptions={
+  walletconnect:{
+    package:window.WalletConnectProvider.default,
+    options:{infuraId:"YOUR_INFURA_ID"}
   }
 };
 
-// connect + auto verify
-document.getElementById("connect").onclick=async()=>{
-  const web3Modal=new window.Web3Modal.default({
-    providerOptions:{
-      walletconnect:{
-        package:window.WalletConnectProvider.default,
-        options:{infuraId:"YOUR_INFURA_ID"}
-      }
-    }
-  });
+const web3Modal=new window.Web3Modal.default({
+  cacheProvider:true,
+  providerOptions
+});
 
-  const provider=await web3Modal.connect();
-  const ethersProvider=new ethers.providers.Web3Provider(provider);
-  const signer=ethersProvider.getSigner();
+/* AUTO RECONNECT */
+window.addEventListener("load",()=>{
+  if(web3Modal.cachedProvider){
+    connectWallet(true);
+  }
+});
 
-  userAddress=await signer.getAddress();
-  document.getElementById("connect").textContent=userAddress.slice(0,6)+"...";
+/* CONNECT */
+document.getElementById("connect").onclick=()=>connectWallet(false);
 
-  fetchNFTs();
-};
+async function connectWallet(isAuto){
+  try{
+    const provider=await web3Modal.connect();
+    const ethersProvider=new ethers.providers.Web3Provider(provider);
+    const signer=ethersProvider.getSigner();
+    userAddress=await signer.getAddress();
 
+    const btn=document.getElementById("connect");
+    btn.textContent=userAddress.slice(0,6)+"...";
+    btn.classList.remove("blink");
+
+    fetchNFTs();
+  }catch(e){
+    if(!isAuto) alert("Connection failed");
+  }
+}
+
+/* FETCH */
 async function fetchNFTs(){
+  const btn=document.getElementById("connect");
+  btn.textContent="Verifying...";
+  btn.classList.add("loading");
+
   const res=await fetch(`/api/opensea?address=${userAddress}`);
   const data=await res.json();
 
   nfts=data.nfts||[];
 
-  if(!nfts.length){
-    if(confirm("No NFTs found. View on OpenSea?")){
-      window.open("https://opensea.io/collection/naivete","_blank");
-    }
-    return;
-  }
+  btn.classList.remove("loading");
 
-  document.getElementById("photo").disabled=false;
-  buildCarousel();
+  showSplash();
 }
 
+/* SPLASH */
+function showSplash(){
+  const splash=document.getElementById("splash");
+  const text=document.getElementById("splashText");
+
+  splash.style.display="flex";
+
+  if(nfts.length){
+    text.innerHTML="WELCOME BESTY 🎉";
+    document.getElementById("photo").disabled=false;
+    buildCarousel();
+  } else {
+    text.innerHTML=`No NFT Found<br><button onclick="window.open('https://opensea.io/collection/naivete')">View Collection</button>`;
+  }
+
+  setTimeout(()=>{
+    splash.classList.add("fade-out");
+    setTimeout(()=>{
+      splash.style.display="none";
+      splash.classList.remove("fade-out");
+    },400);
+  },2200);
+}
+
+/* CAROUSEL */
 function buildCarousel(){
   const el=document.getElementById("carousel");
   el.innerHTML="";
-
   nfts.forEach((n,i)=>{
     const img=document.createElement("img");
     img.src=n.image;
-
     if(i===0) img.classList.add("active");
-
     img.onclick=()=>{
       selected=i;
       updateMain();
       document.querySelectorAll("#carousel img").forEach(x=>x.classList.remove("active"));
       img.classList.add("active");
     };
-
     el.appendChild(img);
   });
-
   updateMain();
 }
-
 function updateMain(){
   document.getElementById("mainNFT").src=nfts[selected].image;
 }
 
-// overlay
+/* OVERLAY */
 const overlay=document.getElementById("nftOverlay");
 document.getElementById("photo").onclick=()=>overlay.style.display="flex";
 overlay.onclick=e=>{ if(e.target===overlay) overlay.style.display="none"; };
 
-// save + flash + export
+/* SAVE */
 document.getElementById("saveBtn").onclick=async()=>{
-  const flash=document.getElementById("flash");
-  flash.classList.remove("flash-active");
-  void flash.offsetWidth;
-  flash.classList.add("flash-active");
-
-  await new Promise(r=>setTimeout(r,150));
-
-  const canvas=await html2canvas(document.getElementById("overlayImageWrap"),{
-    backgroundColor:null,
-    useCORS:true,
-    scale:2
-  });
-
+  const canvas=await html2canvas(document.getElementById("overlayImageWrap"),{backgroundColor:null});
   const link=document.createElement("a");
-  link.download="naivete-class-photo.png";
+  link.download="naivete.png";
   link.href=canvas.toDataURL();
   link.click();
 };
 
-// scroll effect
+/* SCROLL */
 const track=document.getElementById("track");
 const stage=document.querySelector(".stage");
-
 window.addEventListener("scroll",()=>{
-  const scrollY=window.scrollY-stage.offsetTop;
-  const maxScroll=stage.scrollHeight-window.innerHeight;
-  const percent=Math.min(Math.max(scrollY/maxScroll,0),1);
-  const maxTranslate=track.scrollWidth-window.innerWidth;
-  track.style.transform=`translateX(-${percent*maxTranslate}px)`;
+  const y=window.scrollY-stage.offsetTop;
+  const max=stage.scrollHeight-window.innerHeight;
+  const p=Math.min(Math.max(y/max,0),1);
+  track.style.transform=`translateX(-${p*(track.scrollWidth-window.innerWidth)}px)`;
 });
 </script>
 
