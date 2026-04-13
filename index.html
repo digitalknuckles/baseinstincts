@@ -270,7 +270,9 @@ let selected=0;
 
 // rulebook
 document.getElementById("show-rulebook").onclick = () => {
-  document.body.appendChild(document.createElement("naivete-rulebook"));
+  if (!document.querySelector("naivete-rulebook")) {
+    document.body.appendChild(document.createElement("naivete-rulebook"));
+  }
 };
 
 // connect + auto verify
