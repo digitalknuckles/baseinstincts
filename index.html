@@ -264,14 +264,34 @@ connectBtn.onclick = async () => {
 async function verifyNFTs() {
   if (!userAddress) return alert("Connect wallet first");
 
-  const res = await fetch(`/api/opensea?address=${userAddress}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`/api/opensea?address=${userAddress}`);
 
-  nfts = data.nfts || [];
-  if (!nfts.length) return alert("No NFTs found");
+    // 🔥 THIS LINE SAVES YOU
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("API ERROR:", text);
+      alert("API error — check console");
+      return;
+    }
 
-  document.getElementById("photo").disabled = false;
-  buildCarousel();
+    const data = await res.json();
+    console.log("NFT DATA:", data);
+
+    nfts = data.nfts || [];
+
+    if (!nfts.length) {
+      alert("No NFTs found");
+      return;
+    }
+
+    document.getElementById("photo").disabled = false;
+    buildCarousel();
+
+  } catch (err) {
+    console.error("VERIFY ERROR:", err);
+    alert("Something broke — check console");
+  }
 }
 
 document.getElementById("verify").onclick = verifyNFTs;
