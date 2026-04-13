@@ -260,14 +260,16 @@ html, body {
     <div id="saveBtn">📸 Save Class Photo</div>
   </div>
 </div>
-
+  
+<script type="module" src="rulebook.js"></script>
+  
 <script type="module">
 let userAddress=null;
 let nfts=[];
 let selected=0;
 
 // rulebook
-document.getElementById("show-rulebook").onclick=()=>{
+document.getElementById("show-rulebook").onclick = () => {
   document.body.appendChild(document.createElement("naivete-rulebook"));
 };
 
