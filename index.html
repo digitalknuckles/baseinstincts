@@ -17,40 +17,42 @@
   --card-w:60vw;
   --card-h:40vw;
 }
-@media (min-width:768px){
-  :root { --card-w:40vw; --card-h:26vw; }
+@media(min-width:768px){
+  :root{--card-w:40vw;--card-h:26vw;}
 }
 
-body { margin:0; background:#000; color:#fff; overflow-x:hidden; font-family:Inter; }
+body{margin:0;background:#000;color:#fff;font-family:Inter;}
+.bg{position:fixed;inset:0;background:url('image.png') center/cover;}
+.bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.5);}
 
-/* background */
-.bg { position:fixed; inset:0; background:url('image.png') center/cover; }
-.bg::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.6)); }
+.app{position:relative;z-index:1}
 
-/* header */
-.header { display:flex; justify-content:space-between; padding:14px 6vw; }
-.connect-btn {
+.header{
+  display:flex;justify-content:space-between;
+  padding:14px 6vw;
+}
+
+.connect-btn{
   background:linear-gradient(90deg,#ff6ad5,#ffd36a);
-  padding:8px 12px;
-  border-radius:999px;
-  color:#000;
-  cursor:pointer;
+  padding:8px 12px;border-radius:999px;
+  color:#000;font-weight:600;cursor:pointer;
 }
 
-/* blinking */
-.blink { animation:blink 1s infinite; }
-@keyframes blink { 50%{opacity:.3} }
-
-/* loading */
-.loading { opacity:.6; pointer-events:none; }
-
-/* scroll */
-.stage { height:240vh; }
-.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; }
-.track { display:flex; gap:6vw; padding:0 6vw; }
+/* pulse */
+.pulse{animation:pulse 1.2s infinite;}
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+  100%{transform:scale(1)}
+}
 
 /* cards */
-.card {
+.stage{height:240vh}
+.sticky{position:sticky;top:12vh;height:76vh;display:flex;align-items:center}
+.track{display:flex;gap:6vw;padding:0 6vw;overflow-x:auto}
+.track::-webkit-scrollbar{display:none;}
+
+.card{
   width:var(--card-w);
   height:var(--card-h);
   border-radius:18px;
@@ -58,57 +60,48 @@ body { margin:0; background:#000; color:#fff; overflow-x:hidden; font-family:Int
   position:relative;
   background-size:cover;
 }
-.card::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,.35); }
-.card-content {
-  position:absolute; inset:0;
-  display:flex; flex-direction:column;
-  justify-content:flex-end;
-  padding:20px;
+.card::after{
+  content:'';position:absolute;inset:0;background:rgba(0,0,0,.3);
+}
+.card-content{
+  position:absolute;bottom:0;padding:20px;z-index:2;
+}
+.card button{
+  margin-top:10px;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  border:none;padding:6px 14px;border-radius:999px;
+  color:#000;cursor:pointer;
 }
 
 /* overlay */
-#nftOverlay {
-  position:fixed; inset:0; display:none;
-  justify-content:center; align-items:center;
-  background:rgba(0,0,0,.9);
+#overlay{
+  position:fixed;inset:0;display:none;
+  justify-content:center;align-items:center;
+  background:rgba(0,0,0,.85);
   z-index:9999;
 }
-#overlayBox { width:400px; max-width:90%; text-align:center; }
-#overlayImageWrap { position:relative; }
-#overlayImageWrap img { width:100%; border-radius:20px; }
-#hud {
-  position:absolute; inset:0;
+#box{width:400px;max-width:90%;text-align:center}
+#imgWrap{position:relative}
+#imgWrap img{width:100%;border-radius:20px}
+#hud{
+  position:absolute;inset:0;
   background:url('https://ipfs.io/ipfs/bafybeifmgmf2iec3htvgt3lqy6fghf5zfe76ews3invh2a4qclnbondwsq') center/cover;
 }
-#carousel { display:flex; gap:10px; overflow-x:auto; margin-top:10px; }
-#carousel img { width:60px; border-radius:10px; opacity:.5; cursor:pointer; }
-#carousel img.active { opacity:1; border:2px solid #fff; }
-
-#saveBtn {
-  margin-top:10px;
-  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
-  padding:8px;
-  border-radius:999px;
-  color:#000;
-}
+#carousel{display:flex;gap:10px;margin-top:10px;overflow-x:auto}
+#carousel img{width:60px;height:60px;border-radius:10px;opacity:.6;cursor:pointer}
+#carousel img.active{opacity:1;border:2px solid #fff}
+#saveBtn{margin-top:10px}
 
 /* splash */
-#splash {
-  position:fixed; inset:0;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,.95);
-  z-index:9998;
+#splash{
+  position:fixed;inset:0;display:none;
+  justify-content:center;align-items:center;
+  background:#000;z-index:10000;
   flex-direction:column;
-  text-align:center;
-  animation:fadeIn .4s ease;
 }
-#splash.fade-out { animation:fadeOut .4s forwards; }
-
-@keyframes fadeIn { from{opacity:0; transform:scale(.95)} }
-@keyframes fadeOut { to{opacity:0; transform:scale(1.05)} }
-
+#splash img{width:300px;border-radius:20px}
+.flashText{animation:blink .6s infinite}
+@keyframes blink{50%{opacity:.2}}
 </style>
 </head>
 
@@ -116,15 +109,16 @@ body { margin:0; background:#000; color:#fff; overflow-x:hidden; font-family:Int
 
 <div class="bg"></div>
 
+<div class="app">
 <header class="header">
-  <div>Naïveté: Base Instincts</div>
+  <div>Naïveté</div>
   <div class="flex gap-2">
-    <button id="connect" class="connect-btn blink">Connect Wallet</button>
+    <button id="connect" class="connect-btn pulse">Connect</button>
     <button id="photo" class="connect-btn" disabled>Take Class Photo</button>
+    <button id="rule" class="connect-btn">Rulebook</button>
   </div>
 </header>
 
-<main>
 <section class="stage">
 <div class="sticky">
 <div class="track" id="track">
@@ -146,159 +140,178 @@ body { margin:0; background:#000; color:#fff; overflow-x:hidden; font-family:Int
 <div class="card" style="background-image:url('card3.png')">
   <div class="card-content">
     <h3>Gallery</h3>
-    <button onclick="window.open('https://www.spatial.io')">Enter</button>
+    <button onclick="window.open('https://spatial.io')">Enter</button>
   </div>
 </div>
 
 </div>
 </div>
 </section>
-</main>
-
-<!-- splash -->
-<div id="splash">
-  <img src="https://ipfs.io/ipfs/bafybeibq4ndpj2w2sbuf6xl2t5zfggzeyshqwjvcwwrhetqvxzhxpf6pbi" style="width:280px;border-radius:16px;">
-  <div id="splashText" style="margin-top:16px;font-size:22px;"></div>
 </div>
 
-<!-- overlay -->
-<div id="nftOverlay">
-  <div id="overlayBox">
-    <div id="overlayImageWrap">
+<!-- SPLASH -->
+<div id="splash">
+  <img src="https://ipfs.io/ipfs/bafybeibq4ndpj2w2sbuf6xl2t5zfggzeyshqwjvcwwrhetqvxzhxpf6pbi">
+  <h1 id="splashText" class="flashText mt-4"></h1>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <div id="box">
+    <div id="imgWrap">
       <img id="mainNFT">
       <div id="hud"></div>
     </div>
     <div id="carousel"></div>
-    <div id="saveBtn">📸 Save Class Photo</div>
+    <button id="saveBtn" class="connect-btn">📸 Save</button>
   </div>
 </div>
 
-<script>
-let userAddress=null,nfts=[],selected=0;
+<script type="module" src="rulebook.js"></script>
 
-const providerOptions={
-  walletconnect:{
-    package:window.WalletConnectProvider.default,
-    options:{infuraId:"YOUR_INFURA_ID"}
-  }
+<script>
+let provider,signer,address;
+let nfts=[],selected=0;
+
+/* RULEBOOK */
+document.getElementById("rule").onclick=()=>{
+  document.body.appendChild(document.createElement("naivete-rulebook"));
 };
 
-const web3Modal=new window.Web3Modal.default({
-  cacheProvider:true,
-  providerOptions
-});
+/* CONNECT */
+const connectBtn=document.getElementById("connect");
+
+connectBtn.onclick=async()=>{
+  const modal=new window.Web3Modal.default({
+    cacheProvider:true,
+    providerOptions:{
+      walletconnect:{
+        package:window.WalletConnectProvider.default,
+        options:{infuraId:"YOUR_INFURA_ID"}
+      }
+    }
+  });
+
+  provider=await modal.connect();
+  const ethersProvider=new ethers.providers.Web3Provider(provider);
+  signer=ethersProvider.getSigner();
+  address=await signer.getAddress();
+
+  localStorage.setItem("wallet",address);
+
+  connectBtn.classList.remove("pulse");
+  connectBtn.textContent=address.slice(0,6)+"...";
+
+  await fetchNFTs();
+};
 
 /* AUTO RECONNECT */
-window.addEventListener("load",()=>{
-  if(web3Modal.cachedProvider){
-    connectWallet(true);
-  }
-});
-
-/* CONNECT */
-document.getElementById("connect").onclick=()=>connectWallet(false);
-
-async function connectWallet(isAuto){
-  try{
-    const provider=await web3Modal.connect();
-    const ethersProvider=new ethers.providers.Web3Provider(provider);
-    const signer=ethersProvider.getSigner();
-    userAddress=await signer.getAddress();
-
-    const btn=document.getElementById("connect");
-    btn.textContent=userAddress.slice(0,6)+"...";
-    btn.classList.remove("blink");
-
-    fetchNFTs();
-  }catch(e){
-    if(!isAuto) alert("Connection failed");
-  }
+if(localStorage.getItem("wallet")){
+  connectBtn.click();
 }
 
-/* FETCH */
+/* FETCH NFT */
 async function fetchNFTs(){
-  const btn=document.getElementById("connect");
-  btn.textContent="Verifying...";
-  btn.classList.add("loading");
+  connectBtn.textContent="Loading...";
 
-  const res=await fetch(`/api/opensea?address=${userAddress}`);
+  const res=await fetch(`/api/opensea?address=${address}`);
   const data=await res.json();
 
   nfts=data.nfts||[];
 
-  btn.classList.remove("loading");
-
-  showSplash();
+  showSplash(nfts.length>0);
 }
 
 /* SPLASH */
-function showSplash(){
+function showSplash(verified){
   const splash=document.getElementById("splash");
   const text=document.getElementById("splashText");
 
   splash.style.display="flex";
 
-  if(nfts.length){
+  if(verified){
     text.innerHTML="WELCOME BESTY 🎉";
+    confetti();
     document.getElementById("photo").disabled=false;
     buildCarousel();
-  } else {
-    text.innerHTML=`No NFT Found<br><button onclick="window.open('https://opensea.io/collection/naivete')">View Collection</button>`;
+  }else{
+    text.innerHTML=`NO NFT<br><button onclick="window.open('https://opensea.io/collection/naivete')">GET ONE</button>`;
   }
 
   setTimeout(()=>{
-    splash.classList.add("fade-out");
-    setTimeout(()=>{
-      splash.style.display="none";
-      splash.classList.remove("fade-out");
-    },400);
-  },2200);
+    splash.style.display="none";
+  },2500);
+}
+
+/* CONFETTI */
+function confetti(){
+  for(let i=0;i<60;i++){
+    const d=document.createElement("div");
+    d.style.position="fixed";
+    d.style.width="6px";
+    d.style.height="6px";
+    d.style.background="white";
+    d.style.left=Math.random()*100+"%";
+    d.style.top="-10px";
+    d.style.opacity=.7;
+    d.style.transition="2s";
+    document.body.appendChild(d);
+    setTimeout(()=>d.style.top="110%",50);
+    setTimeout(()=>d.remove(),2000);
+  }
 }
 
 /* CAROUSEL */
 function buildCarousel(){
-  const el=document.getElementById("carousel");
-  el.innerHTML="";
+  const c=document.getElementById("carousel");
+  c.innerHTML="";
+
   nfts.forEach((n,i)=>{
     const img=document.createElement("img");
     img.src=n.image;
     if(i===0) img.classList.add("active");
+
     img.onclick=()=>{
       selected=i;
       updateMain();
       document.querySelectorAll("#carousel img").forEach(x=>x.classList.remove("active"));
       img.classList.add("active");
     };
-    el.appendChild(img);
+
+    c.appendChild(img);
   });
+
   updateMain();
 }
+
 function updateMain(){
   document.getElementById("mainNFT").src=nfts[selected].image;
 }
 
 /* OVERLAY */
-const overlay=document.getElementById("nftOverlay");
+const overlay=document.getElementById("overlay");
 document.getElementById("photo").onclick=()=>overlay.style.display="flex";
-overlay.onclick=e=>{ if(e.target===overlay) overlay.style.display="none"; };
+overlay.onclick=e=>{if(e.target===overlay)overlay.style.display="none";};
 
 /* SAVE */
 document.getElementById("saveBtn").onclick=async()=>{
-  const canvas=await html2canvas(document.getElementById("overlayImageWrap"),{backgroundColor:null});
-  const link=document.createElement("a");
-  link.download="naivete.png";
-  link.href=canvas.toDataURL();
-  link.click();
+  const canvas=await html2canvas(document.getElementById("imgWrap"),{useCORS:true});
+  const a=document.createElement("a");
+  a.download="photo.png";
+  a.href=canvas.toDataURL();
+  a.click();
 };
 
 /* SCROLL */
 const track=document.getElementById("track");
 const stage=document.querySelector(".stage");
+
 window.addEventListener("scroll",()=>{
   const y=window.scrollY-stage.offsetTop;
   const max=stage.scrollHeight-window.innerHeight;
   const p=Math.min(Math.max(y/max,0),1);
-  track.style.transform=`translateX(-${p*(track.scrollWidth-window.innerWidth)}px)`;
+  const maxT=track.scrollWidth-window.innerWidth;
+  track.style.transform=`translateX(-${p*maxT}px)`;
 });
 </script>
 
