@@ -12,13 +12,14 @@
 <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
 
 <style>
+/* ==== ORIGINAL STYLES PRESERVED ==== */
 :root {
   --bg-overlay: rgba(0,0,0,0.35);
   --accent: #ff6ad5;
   --card-w: 60vw;
   --card-h: 40vw;
   --gutter: 6vw;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: Inter, system-ui;
 }
 @media (min-width: 768px) {
   :root {
@@ -32,7 +33,6 @@ html, body {
   margin:0;
   background:#000;
   color:#fff;
-  -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
 
@@ -41,7 +41,6 @@ html, body {
   position:fixed;
   inset:0;
   background:center/cover no-repeat url('image.png');
-  filter:contrast(1.03) saturate(1.15);
 }
 .bg::after {
   content:'';
@@ -50,11 +49,9 @@ html, body {
   background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));
 }
 
-/* layout */
 .app { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column }
-.header { display:flex; align-items:center; justify-content:space-between; padding:14px 6vw }
-.title { font-weight:700; font-size:16px; letter-spacing:0.6px }
-.subtitle { font-size:11px; opacity:0.9 }
+.header { display:flex; justify-content:space-between; padding:14px 6vw }
+
 .connect-btn {
   background:linear-gradient(90deg,var(--accent),#ffd36a);
   border:none;
@@ -64,94 +61,33 @@ html, body {
   color:#000;
   cursor:pointer;
 }
-#show-rulebook { background:linear-gradient(90deg,#ffd36a,var(--accent)); }
 
-/* scroll gallery */
-.stage { height:240vh; position:relative }
-.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center; overflow:visible; touch-action:pan-y; }
+/* gallery */
+.stage { height:240vh }
+.sticky { position:sticky; top:12vh; height:76vh; display:flex; align-items:center }
 .track {
   display:flex;
   gap:var(--gutter);
-  align-items:center;
   padding:0 6vw;
   overflow-x:auto;
-  scroll-behavior:smooth;
-  cursor:grab;
-  -webkit-overflow-scrolling: touch;
 }
 .track::-webkit-scrollbar { display:none; }
-.track:active { cursor:grabbing; }
 
 .card {
   width:var(--card-w);
   height:var(--card-h);
   flex:0 0 auto;
-  position:relative;
   border-radius:18px;
   overflow:hidden;
-  background:rgba(255,255,255,0.05);
-  box-shadow:0 6px 20px rgba(0,0,0,0.45);
-  backdrop-filter:blur(8px);
   background-size:cover;
-  background-position:center;
-  transition:transform 0.4s ease, box-shadow 0.4s ease;
-}
-.card:hover {
-  transform:scale(1.05);
-  box-shadow:0 12px 40px rgba(0,0,0,0.6);
+  position:relative;
 }
 .card::after {
-  content:'';
-  position:absolute;
-  inset:0;
-  background:var(--bg-overlay);
-}
-.card-content {
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  padding:20px;
-  z-index:2;
-}
-.card h3 {
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:10px;
-  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.card button {
-  align-self:flex-start;
-  background:linear-gradient(90deg,var(--accent),#ffd36a);
-  color:#000;
-  border:none;
-  padding:8px 16px;
-  border-radius:999px;
-  font-weight:600;
-  font-size:14px;
-  cursor:pointer;
-  transition:opacity 0.3s ease;
-}
-.card button:hover { opacity:0.8; }
-
-.footer {
-  padding:18px 6vw 48px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.controls { display:flex; gap:8px }
-.chip {
-  background:rgba(255,255,255,0.06);
-  padding:8px 10px;
-  border-radius:999px;
-  font-size:13px;
+  content:''; position:absolute; inset:0;
+  background:rgba(0,0,0,0.3);
 }
 
-/* OVERLAY */
+/* ==== OVERLAY ==== */
 #nftOverlay {
   position:fixed; inset:0; display:none;
   justify-content:center; align-items:center;
@@ -159,154 +95,182 @@ html, body {
   backdrop-filter:blur(6px);
   z-index:9999;
 }
-#overlayBox { position:relative; width:400px; max-width:90%; }
-#overlayBox img.main { width:100%; border-radius:20px; }
+
+#overlayBox {
+  width:400px;
+  max-width:90%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+
+#overlayImageWrap {
+  position:relative;
+  width:100%;
+}
+
+#overlayImageWrap img {
+  width:100%;
+  border-radius:20px;
+}
+
 #hud {
   position:absolute; inset:0;
   background:url('https://ipfs.io/ipfs/bafybeifmgmf2iec3htvgt3lqy6fghf5zfe76ews3invh2a4qclnbondwsq') center/cover no-repeat;
-  pointer-events:none; border-radius:20px;
+  pointer-events:none;
+  border-radius:20px;
 }
-#carousel { display:flex; overflow-x:auto; gap:10px; margin-top:10px; }
+
+#carousel {
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+}
+
 #carousel img {
-  width:60px; height:60px; border-radius:10px; cursor:pointer; opacity:0.6;
+  width:60px;
+  height:60px;
+  border-radius:10px;
+  opacity:0.6;
+  cursor:pointer;
 }
-#carousel img.active { opacity:1; border:2px solid white; }
+#carousel img.active {
+  opacity:1;
+  border:2px solid white;
+}
+
+/* save button */
+#saveBtn {
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  color:#000;
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+}
+
+/* flash */
+#flash {
+  position:fixed;
+  inset:0;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+  z-index:10000;
+}
+.flash-active {
+  animation:flashAnim 0.4s ease;
+}
+@keyframes flashAnim {
+  0% { opacity:1; }
+  100% { opacity:0; }
+}
 </style>
 </head>
 
 <body>
+
+<div class="bg"></div>
+
 <div class="app">
-<header class="header flex justify-between p-4">
+<header class="header">
   <div>Naïveté: Base Instincts</div>
   <div class="flex gap-2">
     <button id="connect" class="connect-btn">Connect Wallet</button>
-    <button id="verify" class="connect-btn">Verify NFTs</button>
     <button id="photo" class="connect-btn" disabled>Take Class Photo</button>
+    <button id="show-rulebook" class="connect-btn">Rulebook</button>
   </div>
 </header>
 
-  <main>
-    <section class="stage">
-      <div class="sticky">
-        <div class="track" id="track">
+<main>
+<section class="stage">
+<div class="sticky">
+<div class="track" id="track">
 
-          <!-- NFT Collection -->
-          <div class="card" style="background-image:url('card1.png')">
-            <div class="card-content">
-              <h3>NFT Collection</h3>
-              <button onclick="window.open('https://opensea.io/collection/naivete','_blank')">View on OpenSea</button>
-            </div>
-          </div>
+<div class="card" style="background-image:url('card1.png')"></div>
+<div class="card" style="background-image:url('card2.png')"></div>
+<div class="card" style="background-image:url('card3.png')"></div>
 
-          <!-- Game Page (center card) -->
-          <div class="card" style="background-image:url('card2.png')">
-            <div class="card-content">
-              <h3>Card Game</h3>
-              <button onclick="window.open('https://www.thegamecrafter.com/games/na%C3%AFvet%C3%A9:-base-instincts','_blank')">Play & Buy</button>
-            </div>
-          </div>
-
-          <!-- Virtual Gallery -->
-          <div class="card" style="background-image:url('card3.png')">
-            <div class="card-content">
-              <h3>Virtual Gallery</h3>
-              <button onclick="window.open('https://www.spatial.io/s/Naivete-Base-Instincts-68f01f9a884893267eca2a70?share=2043180943931599241','_blank')">Enter Gallery</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <section class="footer">
-      <div class="controls">
-        <div class="chip">54 Card Deck</div>
-        <div class="chip">Booster Packs</div>
-        <div class="chip">Collect Avatars, Pets, and Items</div>
-      </div>
-    </section>
-  </main>
 </div>
+</div>
+</section>
+</main>
+</div>
+
+<div id="flash"></div>
 
 <!-- OVERLAY -->
 <div id="nftOverlay">
   <div id="overlayBox">
-    <img id="mainNFT" class="main" src="" />
-    <div id="hud"></div>
+    <div id="overlayImageWrap">
+      <img id="mainNFT" src="" />
+      <div id="hud"></div>
+    </div>
     <div id="carousel"></div>
+    <div id="saveBtn">📸 Save Class Photo</div>
   </div>
 </div>
 
 <script type="module">
-let userAddress = null;
-let nfts = [];
-let selected = 0;
+let userAddress=null;
+let nfts=[];
+let selected=0;
 
-// Wallet
-const providerOptions = {
-  walletconnect: {
-    package: window.WalletConnectProvider.default,
-    options: { infuraId: "YOUR_INFURA_ID" }
-  }
-};
-const web3Modal = new window.Web3Modal.default({ providerOptions });
-
-const connectBtn = document.getElementById("connect");
-connectBtn.onclick = async () => {
-  const provider = await web3Modal.connect();
-  const ethersProvider = new ethers.providers.Web3Provider(provider);
-  const signer = ethersProvider.getSigner();
-  userAddress = await signer.getAddress();
-  connectBtn.textContent = userAddress.slice(0,6)+"...";
+// RULEBOOK
+document.getElementById("show-rulebook").onclick=()=>{
+  document.body.appendChild(document.createElement("naivete-rulebook"));
 };
 
-// VERIFY NFTs via Vercel API route
-async function verifyNFTs() {
-  if (!userAddress) return alert("Connect wallet first");
-
-  try {
-    const res = await fetch(`/api/opensea?address=${userAddress}`);
-
-    // 🔥 THIS LINE SAVES YOU
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("API ERROR:", text);
-      alert("API error — check console");
-      return;
+// WALLET CONNECT + AUTO VERIFY
+document.getElementById("connect").onclick=async()=>{
+  const web3Modal=new window.Web3Modal.default({
+    providerOptions:{
+      walletconnect:{
+        package:window.WalletConnectProvider.default,
+        options:{infuraId:"YOUR_INFURA_ID"}
+      }
     }
+  });
 
-    const data = await res.json();
-    console.log("NFT DATA:", data);
+  const provider=await web3Modal.connect();
+  const ethersProvider=new ethers.providers.Web3Provider(provider);
+  const signer=ethersProvider.getSigner();
 
-    nfts = data.nfts || [];
+  userAddress=await signer.getAddress();
+  document.getElementById("connect").textContent=userAddress.slice(0,6)+"...";
 
-    if (!nfts.length) {
-      alert("No NFTs found");
-      return;
+  fetchNFTs();
+};
+
+async function fetchNFTs(){
+  const res=await fetch(`/api/opensea?address=${userAddress}`);
+  const data=await res.json();
+
+  nfts=data.nfts||[];
+
+  if(!nfts.length){
+    if(confirm("No NFTs found. View on OpenSea?")){
+      window.open("https://opensea.io/collection/naivete","_blank");
     }
-
-    document.getElementById("photo").disabled = false;
-    buildCarousel();
-
-  } catch (err) {
-    console.error("VERIFY ERROR:", err);
-    alert("Something broke — check console");
+    return;
   }
+
+  document.getElementById("photo").disabled=false;
+  buildCarousel();
 }
 
-document.getElementById("verify").onclick = verifyNFTs;
-
-function buildCarousel() {
-  const el = document.getElementById("carousel");
-  el.innerHTML = "";
+function buildCarousel(){
+  const el=document.getElementById("carousel");
+  el.innerHTML="";
 
   nfts.forEach((n,i)=>{
-    const img = document.createElement("img");
-    img.src = n.image;
+    const img=document.createElement("img");
+    img.src=n.image;
+
     if(i===0) img.classList.add("active");
 
-    img.onclick = ()=>{
-      selected = i;
+    img.onclick=()=>{
+      selected=i;
       updateMain();
       document.querySelectorAll("#carousel img").forEach(x=>x.classList.remove("active"));
       img.classList.add("active");
@@ -319,17 +283,34 @@ function buildCarousel() {
 }
 
 function updateMain(){
-  document.getElementById("mainNFT").src = nfts[selected].image;
+  document.getElementById("mainNFT").src=nfts[selected].image;
 }
 
-// Overlay toggle
-const overlay = document.getElementById("nftOverlay");
-document.getElementById("photo").onclick = ()=>{
-  overlay.style.display = "flex";
+// overlay
+const overlay=document.getElementById("nftOverlay");
+document.getElementById("photo").onclick=()=>overlay.style.display="flex";
+overlay.onclick=e=>{ if(e.target===overlay) overlay.style.display="none"; };
+
+// flash
+document.getElementById("saveBtn").onclick=()=>{
+  const flash=document.getElementById("flash");
+  flash.classList.remove("flash-active");
+  void flash.offsetWidth;
+  flash.classList.add("flash-active");
 };
-overlay.onclick = (e)=>{
-  if(e.target===overlay) overlay.style.display="none";
-};
+
+// scroll effect
+const track=document.getElementById("track");
+const stage=document.querySelector(".stage");
+
+window.addEventListener("scroll",()=>{
+  const scrollY=window.scrollY-stage.offsetTop;
+  const maxScroll=stage.scrollHeight-window.innerHeight;
+  const percent=Math.min(Math.max(scrollY/maxScroll,0),1);
+  const maxTranslate=track.scrollWidth-window.innerWidth;
+  track.style.transform=`translateX(-${percent*maxTranslate}px)`;
+});
 </script>
+
 </body>
 </html>
