@@ -167,9 +167,12 @@ class NaiveteRulebook extends HTMLElement {
     this.nextBtn.addEventListener("click", () => this.changePage(+1));
 
     // ✅ close when clicking outside panel
-    this.shadowRoot.addEventListener("click", (e) => {
-      if (e.target === this.shadowRoot.host) this.close();
-    });
+this.shadowRoot.addEventListener("click", (e) => {
+  const panel = this.shadowRoot.querySelector(".panel");
+  if (!panel.contains(e.target)) {
+    this.close();
+  }
+});
 
     // ✅ ESC closes
     window.addEventListener("keydown", this.keyHandler = (e) => {
