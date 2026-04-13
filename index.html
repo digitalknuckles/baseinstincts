@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#ff6ad5" />
+<title>Naïveté © : Base Instincts</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
+<script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+
+<style>
+/* EXISTING STYLES PRESERVED */
+:root {
+  --bg-overlay: rgba(0,0,0,0.35);
+  --accent: #ff6ad5;
+  --card-w: 60vw;
+  --card-h: 40vw;
+  --gutter: 6vw;
+}
+body { margin:0; background:#000; color:#fff; }
+
+/* OVERLAY */
+#nftOverlay {
+  position:fixed; inset:0; display:none;
+  justify-content:center; align-items:center;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(6px);
+  z-index:9999;
+}
+#overlayBox { position:relative; width:400px; max-width:90%; }
+#overlayBox img.main { width:100%; border-radius:20px; }
+#hud {
+  position:absolute; inset:0;
+  background:url('https://ipfs.io/ipfs/bafybeifmgmf2iec3htvgt3lqy6fghf5zfe76ews3invh2a4qclnbondwsq') center/cover no-repeat;
+  pointer-events:none; border-radius:20px;
+}
+#carousel { display:flex; overflow-x:auto; gap:10px; margin-top:10px; }
+#carousel img {
+  width:60px; height:60px; border-radius:10px; cursor:pointer; opacity:0.6;
+}
+#carousel img.active { opacity:1; border:2px solid white; }
+</style>
+</head>
+
+<body>
+<div class="app">
+<header class="header flex justify-between p-4">
+  <div>Naïveté: Base Instincts</div>
+  <div class="flex gap-2">
+    <button id="connect" class="connect-btn">Connect Wallet</button>
+    <button id="verify" class="connect-btn">Verify NFTs</button>
+    <button id="photo" class="connect-btn" disabled>Take Class Photo</button>
+  </div>
+</header>
+
+<!-- EXISTING CONTENT LEFT INTACT -->
+
+</div>
+
+<!-- OVERLAY -->
+<div id="nftOverlay">
+  <div id="overlayBox">
+    <img id="mainNFT" class="main" src="" />
+    <div id="hud"></div>
+    <div id="carousel"></div>
+  </div>
+</div>
+
+<script type="module">
+let userAddress = null;
+let nfts = [];
+let selected = 0;
+
+// Wallet
+const providerOptions = {
+  walletconnect: {
+    package: window.WalletConnectProvider.default,
+    options: { infuraId: "YOUR_INFURA_ID" }
+  }
+};
+const web3Modal = new window.Web3Modal.default({ providerOptions });
+
+const connectBtn = document.getElementById("connect");
+connectBtn.onclick = async () => {
+  const provider = await web3Modal.connect();
+  const ethersProvider = new ethers.providers.Web3Provider(provider);
+  const signer = ethersProvider.getSigner();
+  userAddress = await signer.getAddress();
+  connectBtn.textContent = userAddress.slice(0,6)+"...";
+};
+
+// VERIFY NFTs via Vercel API route
+async function verifyNFTs() {
+  if (!userAddress) return alert("Connect wallet first");
+
+  const res = await fetch(`/api/opensea?address=${userAddress}`);
+  const data = await res.json();
+
+  nfts = data.nfts || [];
+  if (!nfts.length) return alert("No NFTs found");
+
+  document.getElementById("photo").disabled = false;
+  buildCarousel();
+}
+
+document.getElementById("verify").onclick = verifyNFTs;
+
+function buildCarousel() {
+  const el = document.getElementById("carousel");
+  el.innerHTML = "";
+
+  nfts.forEach((n,i)=>{
+    const img = document.createElement("img");
+    img.src = n.image;
+    if(i===0) img.classList.add("active");
+
+    img.onclick = ()=>{
+      selected = i;
+      updateMain();
+      document.querySelectorAll("#carousel img").forEach(x=>x.classList.remove("active"));
+      img.classList.add("active");
+    };
+
+    el.appendChild(img);
+  });
+
+  updateMain();
+}
+
+function updateMain(){
+  document.getElementById("mainNFT").src = nfts[selected].image;
+}
+
+// Overlay toggle
+const overlay = document.getElementById("nftOverlay");
+document.getElementById("photo").onclick = ()=>{
+  overlay.style.display = "flex";
+};
+overlay.onclick = (e)=>{
+  if(e.target===overlay) overlay.style.display="none";
+};
+</script>
+</body>
+</html>
