@@ -10,11 +10,10 @@ const r = await fetch(
   }
 );
 
-  const data = await r.json();
+const data = await r.json();
 
-  const nfts = (data.nfts || []).map(n => ({
-    image: n.image_url || n.display_image_url
-  }));
-
-  res.status(200).json({ nfts });
-}
+const nfts = (data.nfts || []).filter(n =>
+  n.owners?.some(o => o.address.toLowerCase() === address.toLowerCase())
+).map(n => ({
+  image: n.image_url || n.display_image_url
+}));
