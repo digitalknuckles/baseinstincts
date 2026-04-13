@@ -6,14 +6,14 @@
 <meta name="theme-color" content="#ff6ad5" />
 <title>Naïveté © : Base Instincts</title>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
 <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-/* ==== ORIGINAL STYLES PRESERVED ==== */
+/* ===== ORIGINAL STYLES ===== */
 :root {
   --bg-overlay: rgba(0,0,0,0.35);
   --accent: #ff6ad5;
@@ -50,9 +50,9 @@ html, body {
   background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));
 }
 
+/* layout */
 .app { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column }
-.header { display:flex; justify-content:space-between; padding:14px 6vw }
-
+.header { display:flex; align-items:center; justify-content:space-between; padding:14px 6vw }
 .connect-btn {
   background:linear-gradient(90deg,var(--accent),#ffd36a);
   border:none;
@@ -74,21 +74,51 @@ html, body {
 }
 .track::-webkit-scrollbar { display:none; }
 
+/* cards */
 .card {
   width:var(--card-w);
   height:var(--card-h);
   flex:0 0 auto;
+  position:relative;
   border-radius:18px;
   overflow:hidden;
   background-size:cover;
-  position:relative;
+  background-position:center;
 }
 .card::after {
-  content:''; position:absolute; inset:0;
-  background:rgba(0,0,0,0.3);
+  content:'';
+  position:absolute;
+  inset:0;
+  background:var(--bg-overlay);
+}
+.card-content {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:20px;
+  z-index:2;
+}
+.card h3 {
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:10px;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.card button {
+  background:linear-gradient(90deg,var(--accent),#ffd36a);
+  color:#000;
+  border:none;
+  padding:8px 16px;
+  border-radius:999px;
+  font-weight:600;
+  cursor:pointer;
 }
 
-/* ==== OVERLAY ==== */
+/* ===== OVERLAY ===== */
 #nftOverlay {
   position:fixed; inset:0; display:none;
   justify-content:center; align-items:center;
@@ -117,8 +147,9 @@ html, body {
 }
 
 #hud {
-  position:absolute; inset:0;
-  background:url('https://ipfs.io/ipfs/bafybeiasnk6fhvqxc4eqnytyp42wsayqe477v7nlz6gipkmnf5ts2kel2q') center/cover no-repeat;
+  position:absolute;
+  inset:0;
+  background:url('https://ipfs.io/ipfs/bafybeifmgmf2iec3htvgt3lqy6fghf5zfe76ews3invh2a4qclnbondwsq') center/cover no-repeat;
   pointer-events:none;
   border-radius:20px;
 }
@@ -128,7 +159,6 @@ html, body {
   overflow-x:auto;
   gap:10px;
 }
-
 #carousel img {
   width:60px;
   height:60px;
@@ -141,7 +171,6 @@ html, body {
   border:2px solid white;
 }
 
-/* save button */
 #saveBtn {
   background:linear-gradient(90deg,#ff6ad5,#ffd36a);
   color:#000;
@@ -188,9 +217,29 @@ html, body {
 <div class="sticky">
 <div class="track" id="track">
 
-<div class="card" style="background-image:url('card1.png')"></div>
-<div class="card" style="background-image:url('card2.png')"></div>
-<div class="card" style="background-image:url('card3.png')"></div>
+<!-- NFT Collection -->
+<div class="card" style="background-image:url('card1.png')">
+  <div class="card-content">
+    <h3>NFT Collection</h3>
+    <button onclick="window.open('https://opensea.io/collection/naivete','_blank')">View on OpenSea</button>
+  </div>
+</div>
+
+<!-- Game -->
+<div class="card" style="background-image:url('card2.png')">
+  <div class="card-content">
+    <h3>Card Game</h3>
+    <button onclick="window.open('https://www.thegamecrafter.com/games/na%C3%AFvet%C3%A9:-base-instincts','_blank')">Play & Buy</button>
+  </div>
+</div>
+
+<!-- Gallery -->
+<div class="card" style="background-image:url('card3.png')">
+  <div class="card-content">
+    <h3>Virtual Gallery</h3>
+    <button onclick="window.open('https://www.spatial.io','_blank')">Enter Gallery</button>
+  </div>
+</div>
 
 </div>
 </div>
@@ -217,12 +266,12 @@ let userAddress=null;
 let nfts=[];
 let selected=0;
 
-// RULEBOOK
+// rulebook
 document.getElementById("show-rulebook").onclick=()=>{
   document.body.appendChild(document.createElement("naivete-rulebook"));
 };
 
-// WALLET CONNECT + AUTO VERIFY
+// connect + auto verify
 document.getElementById("connect").onclick=async()=>{
   const web3Modal=new window.Web3Modal.default({
     providerOptions:{
@@ -292,30 +341,24 @@ const overlay=document.getElementById("nftOverlay");
 document.getElementById("photo").onclick=()=>overlay.style.display="flex";
 overlay.onclick=e=>{ if(e.target===overlay) overlay.style.display="none"; };
 
-// flash
-document.getElementById("saveBtn").onclick = async () => {
-
-  const flash = document.getElementById("flash");
-
-  // trigger flash
+// save + flash + export
+document.getElementById("saveBtn").onclick=async()=>{
+  const flash=document.getElementById("flash");
   flash.classList.remove("flash-active");
   void flash.offsetWidth;
   flash.classList.add("flash-active");
 
-  // wait a tiny bit so flash "feels real"
-  await new Promise(res => setTimeout(res, 150));
+  await new Promise(r=>setTimeout(r,150));
 
-  const target = document.getElementById("overlayImageWrap");
-
-  const canvas = await html2canvas(target, {
-    backgroundColor: null,
-    useCORS: true,
-    scale: 2
+  const canvas=await html2canvas(document.getElementById("overlayImageWrap"),{
+    backgroundColor:null,
+    useCORS:true,
+    scale:2
   });
 
-  const link = document.createElement("a");
-  link.download = "naivete-class-photo.png";
-  link.href = canvas.toDataURL("image/png");
+  const link=document.createElement("a");
+  link.download="naivete-class-photo.png";
+  link.href=canvas.toDataURL();
   link.click();
 };
 
