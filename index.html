@@ -409,15 +409,26 @@ function updateMain(){
 
   document.getElementById("mainNFT").src = nft.image;
 
-  // 🧠 METADATA
-  document.getElementById("metaName").textContent = nft.name || "Naïveté";
+  // NAME
+  document.getElementById("metaName").textContent =
+    nft.name || nft.metadata?.name || "Naïveté";
 
-  const traits = nft.traits || nft.attributes || [];
+  // 🧠 TRAITS — handle ALL possible structures
+  const traits =
+    nft.attributes ||
+    nft.traits ||
+    nft.metadata?.attributes ||
+    [];
 
   const metaEl = document.getElementById("metaTraits");
   metaEl.innerHTML = "";
 
-  traits.slice(0, 10).forEach(t => {
+  if (!traits.length) {
+    metaEl.innerHTML = `<div style="opacity:.5">No traits found</div>`;
+    return;
+  }
+
+  traits.slice(0, 12).forEach(t => {
     const row = document.createElement("div");
     row.className = "metaRow";
 
@@ -434,6 +445,8 @@ function updateMain(){
     metaEl.appendChild(row);
   });
 }
+
+  console.log("NFT SAMPLE:", nfts[0]);
 
 // overlay
 const overlay=document.getElementById("nftOverlay");
