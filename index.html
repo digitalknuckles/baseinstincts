@@ -252,41 +252,96 @@ html, body {
   100% { opacity:0; }
 }
 
-  /* ===== STATS PANEL ===== */
-#statsPanel {
+/* ===== CHARACTER CARD UI ===== */
+#characterCard {
   width:100%;
-  background:rgba(0,0,0,0.6);
-  border-radius:14px;
-  padding:10px;
-  font-size:12px;
+  background:rgba(10,10,12,0.75);
+  border-radius:16px;
+  padding:12px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.08);
 }
 
-.stat {
+/* header */
+.char-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
   margin-bottom:8px;
 }
 
+.char-name {
+  font-weight:700;
+  font-size:14px;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.char-role {
+  font-size:11px;
+  opacity:0.7;
+}
+
+.badge {
+  font-size:10px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  color:#000;
+  font-weight:600;
+}
+
+/* stat bars */
+.stat {
+  margin-bottom:8px;
+}
 .stat-label {
   display:flex;
   justify-content:space-between;
-  margin-bottom:2px;
   font-size:11px;
-  opacity:0.8;
+  margin-bottom:2px;
 }
-
 .stat-bar {
   width:100%;
   height:8px;
-  background:rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.08);
   border-radius:999px;
   overflow:hidden;
 }
-
 .stat-fill {
   height:100%;
   border-radius:999px;
   background:linear-gradient(90deg,#ff6ad5,#ffd36a);
   width:0%;
   transition:width 0.6s ease;
+}
+
+/* trait grid */
+.trait-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px;
+  margin-top:8px;
+}
+
+.trait {
+  background:rgba(255,255,255,0.05);
+  padding:6px;
+  border-radius:8px;
+  font-size:10px;
+}
+
+.trait span {
+  display:block;
+  opacity:0.6;
+  font-size:9px;
+}
+
+/* power glow */
+.power-glow {
+  box-shadow:0 0 20px rgba(255,106,213,0.4);
+  transition:0.3s;
 }
 </style>
 </head>
@@ -362,7 +417,7 @@ html, body {
   </div>
 
   <!-- 🔥 NEW STATS PANEL -->
-  <div id="statsPanel"></div>
+ <div id="characterCard"></div>
 
   <div id="carousel"></div>
   <div id="saveBtn">📸 Save Class Photo</div>
@@ -444,18 +499,17 @@ function buildCarousel(){
 
 function updateMain(){
   const nft = nfts[selected];
-
   document.getElementById("mainNFT").src = nft.image;
 
-  const statsEl = document.getElementById("statsPanel");
+  const el = document.getElementById("characterCard");
 
   if (!nft.attributes) {
-    statsEl.innerHTML = "<div>No stats available</div>";
+    el.innerHTML = "<div>No data</div>";
     return;
   }
 
   const getAttr = (type) => {
-    return nft.attributes.find(a => 
+    return nft.attributes.find(a =>
       a.trait_type.toLowerCase() === type.toLowerCase()
     )?.value;
   };
@@ -463,33 +517,65 @@ function updateMain(){
   const hp = parseInt(getAttr("HP")) || 0;
   const power = parseInt(getAttr("power level")) || 0;
 
-  statsEl.innerHTML = `
-    <div class="stat">
-      <div class="stat-label">
-        <span>HP</span>
-        <span>${hp}</span>
-      </div>
-      <div class="stat-bar">
-        <div class="stat-fill" id="hpBar"></div>
-      </div>
-    </div>
+  const avatar = getAttr("avatar") || "Unknown";
+  const team = getAttr("team") || "No Team";
 
-    <div class="stat">
-      <div class="stat-label">
-        <span>Power</span>
-        <span>${power}</span>
+  // remove main stats from trait grid
+  const traits = nft.attributes.filter(a =>
+    !["hp","power level"].includes(a.trait_type.toLowerCase())
+  );
+
+  el.innerHTML = `
+    <div class="${power > 110 ? 'power-glow' : ''}">
+      
+      <div class="char-header">
+        <div>
+          <div class="char-name">${nft.name || "Unnamed"}</div>
+          <div class="char-role">${avatar}</div>
+        </div>
+        <div class="badge">${team}</div>
       </div>
-      <div class="stat-bar">
-        <div class="stat-fill" id="powerBar"></div>
+
+      <!-- HP -->
+      <div class="stat">
+        <div class="stat-label">
+          <span>HP</span>
+          <span>${hp}</span>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-fill" id="hpBar"></div>
+        </div>
       </div>
+
+      <!-- POWER -->
+      <div class="stat">
+        <div class="stat-label">
+          <span>Power</span>
+          <span>${power}</span>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-fill" id="powerBar"></div>
+        </div>
+      </div>
+
+      <!-- TRAITS -->
+      <div class="trait-grid">
+        ${traits.map(t => `
+          <div class="trait">
+            <span>${t.trait_type}</span>
+            ${t.value}
+          </div>
+        `).join("")}
+      </div>
+
     </div>
   `;
 
   // animate bars
-  setTimeout(() => {
-    document.getElementById("hpBar").style.width = Math.min(hp, 150) + "%";
-    document.getElementById("powerBar").style.width = Math.min(power, 150) + "%";
-  }, 50);
+  setTimeout(()=>{
+    document.getElementById("hpBar").style.width = Math.min(hp,150)+"%";
+    document.getElementById("powerBar").style.width = Math.min(power,150)+"%";
+  },50);
 }
 
   console.log("NFT SAMPLE:", nfts[0]);
