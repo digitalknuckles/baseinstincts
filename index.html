@@ -121,10 +121,9 @@ html, body {
 /* ===== OVERLAY ===== */
 #overlayRow {
   display:flex;
-  gap:16px;
+  gap:14px;
   width:100%;
   align-items:flex-start;
-  justify-content:center;
 }
 
 #metaBox {
@@ -345,10 +344,11 @@ html, body {
   transition:0.3s;
 }
 
-/* make image area stable */
 #captureArea {
-  flex:1;
-  min-width:260px;
+  position:relative;
+  width:400px;
+  height:400px; /* 🔥 CRITICAL FIX */
+  flex-shrink:0;
 }
 
 #captureArea img {
@@ -366,10 +366,13 @@ html, body {
 }
 
   /* ===== DROPDOWN CHARACTER CARD ===== */
-/* 🔥 FIX DESKTOP SQUEEZE */
 #characterCardWrapper {
-  flex:0 0 240px; /* fixed width column */
-  max-width:240px;
+  width:100%;
+  border-radius:14px;
+  overflow:hidden;
+  background:rgba(10,10,12,0.75);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.08);
 }
 
 #cardToggle {
