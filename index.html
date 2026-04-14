@@ -364,6 +364,52 @@ html, body {
   pointer-events:none;
   border-radius:20px;
 }
+
+  /* ===== DROPDOWN CHARACTER CARD ===== */
+#characterCardWrapper {
+  width:100%;
+  border-radius:14px;
+  overflow:hidden;
+  background:rgba(10,10,12,0.75);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+#cardToggle {
+  width:100%;
+  padding:10px;
+  font-size:13px;
+  font-weight:600;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  color:#000;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+#cardToggle span {
+  font-size:11px;
+  opacity:0.7;
+}
+
+#characterCard {
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.35s ease;
+  padding:0 10px;
+}
+
+#characterCard.open {
+  max-height:500px; /* enough for full stats */
+  padding:10px;
+}
+
+/* keep controls visible */
+#overlayBox {
+  justify-content:flex-start;
+}
 </style>
 </head>
 
@@ -431,7 +477,14 @@ html, body {
       </div>
 
       <!-- CHARACTER CARD UI -->
-      <div id="characterCard"></div>
+      <div id="characterCardWrapper">
+  <button id="cardToggle">
+    Character Stats
+    <span id="toggleIcon">▼</span>
+  </button>
+
+  <div id="characterCard"></div>
+</div>
 
     </div>
 
@@ -522,6 +575,9 @@ function updateMain(){
 
   const el = document.getElementById("characterCard");
 
+  card.classList.remove("open");
+  icon.textContent = "▼";
+
   if (!nft.attributes) {
     el.innerHTML = "<div>No data</div>";
     return;
@@ -598,6 +654,15 @@ function updateMain(){
 }
 
   console.log("NFT SAMPLE:", nfts[0]);
+
+const toggleBtn = document.getElementById("cardToggle");
+const card = document.getElementById("characterCard");
+const icon = document.getElementById("toggleIcon");
+
+toggleBtn.onclick = () => {
+  card.classList.toggle("open");
+  icon.textContent = card.classList.contains("open") ? "▲" : "▼";
+};
 
 // overlay
 const overlay=document.getElementById("nftOverlay");
