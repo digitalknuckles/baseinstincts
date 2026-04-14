@@ -343,6 +343,24 @@ html, body {
   box-shadow:0 0 20px rgba(255,106,213,0.4);
   transition:0.3s;
 }
+
+  #captureArea {
+  position:relative;
+  width:400px; /* 🔥 force consistent export size */
+  max-width:90vw;
+}
+
+#captureArea img {
+  width:100%;
+  display:block;
+  border-radius:20px;
+}
+
+#hud {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
 </style>
 </head>
 
@@ -404,10 +422,10 @@ html, body {
     <!-- FLEX WRAP FOR IMAGE + METADATA -->
     <div id="overlayRow">
       
-      <div id="overlayImageWrap">
-        <img id="mainNFT" src="" />
-        <div id="hud"></div>
-      </div>
+<div id="captureArea">
+  <img id="mainNFT" src="" />
+  <div id="hud"></div>
+</div>
 
       <!-- 🧠 METADATA PANEL -->
 <div id="overlayBox">
@@ -586,23 +604,27 @@ document.getElementById("photo").onclick=()=>overlay.style.display="flex";
 overlay.onclick=e=>{ if(e.target===overlay) overlay.style.display="none"; };
 
 // save + flash + export
-document.getElementById("saveBtn").onclick=async()=>{
-  const flash=document.getElementById("flash");
+document.getElementById("saveBtn").onclick = async () => {
+  const flash = document.getElementById("flash");
   flash.classList.remove("flash-active");
   void flash.offsetWidth;
   flash.classList.add("flash-active");
 
-  await new Promise(r=>setTimeout(r,150));
+  await new Promise(r => setTimeout(r, 150));
 
-  const canvas=await html2canvas(document.getElementById("overlayImageWrap"),{
-    backgroundColor:null,
-    useCORS:true,
-    scale:2
+  const target = document.getElementById("captureArea");
+
+  const canvas = await html2canvas(target, {
+    backgroundColor: null,
+    useCORS: true,
+    scale: 3, // 🔥 high-res export
+    width: target.offsetWidth,
+    height: target.offsetHeight
   });
 
-  const link=document.createElement("a");
-  link.download="naivete-class-photo.png";
-  link.href=canvas.toDataURL();
+  const link = document.createElement("a");
+  link.download = "naivete-class-photo.png";
+  link.href = canvas.toDataURL("image/png", 1.0);
   link.click();
 };
 
