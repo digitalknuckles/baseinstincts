@@ -119,6 +119,62 @@ html, body {
 }
 
 /* ===== OVERLAY ===== */
+#overlayRow {
+  display:flex;
+  gap:14px;
+  width:100%;
+  align-items:flex-start;
+}
+
+#metaBox {
+  min-width:140px;
+  max-width:160px;
+  font-size:12px;
+  background:rgba(0,0,0,0.6);
+  padding:10px;
+  border-radius:12px;
+  backdrop-filter:blur(6px);
+}
+
+#metaName {
+  font-weight:700;
+  margin-bottom:6px;
+  font-size:13px;
+}
+
+#metaTraits {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  opacity:0.9;
+}
+
+.metaRow {
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+}
+
+.metaKey {
+  opacity:0.6;
+}
+
+.metaVal {
+  font-weight:600;
+}
+
+/* MOBILE STACK */
+@media (max-width: 640px){
+  #overlayRow {
+    flex-direction:column;
+    align-items:center;
+  }
+  #metaBox {
+    width:100%;
+    max-width:none;
+  }
+}
+  
 #nftOverlay {
   position:fixed; inset:0; display:none;
   justify-content:center; align-items:center;
@@ -252,14 +308,28 @@ html, body {
 <!-- OVERLAY -->
 <div id="nftOverlay">
   <div id="overlayBox">
-    <div id="overlayImageWrap">
-      <img id="mainNFT" src="" />
-      <div id="hud"></div>
+
+    <!-- FLEX WRAP FOR IMAGE + METADATA -->
+    <div id="overlayRow">
+      
+      <div id="overlayImageWrap">
+        <img id="mainNFT" src="" />
+        <div id="hud"></div>
+      </div>
+
+      <!-- 🧠 METADATA PANEL -->
+      <div id="metaBox">
+        <h3 id="metaName"></h3>
+        <div id="metaTraits"></div>
+      </div>
+
     </div>
+
     <div id="carousel"></div>
     <div id="saveBtn">📸 Save Class Photo</div>
   </div>
 </div>
+
   
 <script type="module" src="rulebook.js"></script>
   
@@ -335,7 +405,34 @@ function buildCarousel(){
 }
 
 function updateMain(){
-  document.getElementById("mainNFT").src=nfts[selected].image;
+  const nft = nfts[selected];
+
+  document.getElementById("mainNFT").src = nft.image;
+
+  // 🧠 METADATA
+  document.getElementById("metaName").textContent = nft.name || "Naïveté";
+
+  const traits = nft.traits || nft.attributes || [];
+
+  const metaEl = document.getElementById("metaTraits");
+  metaEl.innerHTML = "";
+
+  traits.slice(0, 10).forEach(t => {
+    const row = document.createElement("div");
+    row.className = "metaRow";
+
+    const key = document.createElement("div");
+    key.className = "metaKey";
+    key.textContent = t.trait_type || "Trait";
+
+    const val = document.createElement("div");
+    val.className = "metaVal";
+    val.textContent = t.value;
+
+    row.appendChild(key);
+    row.appendChild(val);
+    metaEl.appendChild(row);
+  });
 }
 
 // overlay
