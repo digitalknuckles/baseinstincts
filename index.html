@@ -344,15 +344,17 @@ html, body {
   transition:0.3s;
 }
 
-  #captureArea {
+#captureArea {
   position:relative;
-  width:400px; /* 🔥 force consistent export size */
-  max-width:90vw;
+  width:400px;
+  height:400px; /* 🔥 CRITICAL FIX */
+  flex-shrink:0;
 }
 
 #captureArea img {
   width:100%;
-  display:block;
+  height:100%;
+  object-fit:cover;
   border-radius:20px;
 }
 
@@ -360,6 +362,7 @@ html, body {
   position:absolute;
   inset:0;
   pointer-events:none;
+  border-radius:20px;
 }
 </style>
 </head>
@@ -419,26 +422,24 @@ html, body {
 <div id="nftOverlay">
   <div id="overlayBox">
 
-    <!-- FLEX WRAP FOR IMAGE + METADATA -->
     <div id="overlayRow">
-      
-<div id="captureArea">
-  <img id="mainNFT" src="" />
-  <div id="hud"></div>
-</div>
 
-      <!-- 🧠 METADATA PANEL -->
-<div id="overlayBox">
-  <div id="overlayImageWrap">
-    <img id="mainNFT" src="" />
-    <div id="hud"></div>
+      <!-- ✅ CAPTURE TARGET (ONLY THIS GETS EXPORTED) -->
+      <div id="captureArea">
+        <img id="mainNFT" src="" />
+        <div id="hud"></div>
+      </div>
+
+      <!-- CHARACTER CARD UI -->
+      <div id="characterCard"></div>
+
+    </div>
+
+    <!-- BELOW (NOT CAPTURED) -->
+    <div id="carousel"></div>
+    <div id="saveBtn">📸 Save Class Photo</div>
+
   </div>
-
-  <!-- 🔥 NEW STATS PANEL -->
- <div id="characterCard"></div>
-
-  <div id="carousel"></div>
-  <div id="saveBtn">📸 Save Class Photo</div>
 </div>
 
   
@@ -614,17 +615,20 @@ document.getElementById("saveBtn").onclick = async () => {
 
   const target = document.getElementById("captureArea");
 
+  // 🔥 FORCE DIMENSIONS (prevents tiny export bug)
+  const rect = target.getBoundingClientRect();
+
   const canvas = await html2canvas(target, {
     backgroundColor: null,
     useCORS: true,
-    scale: 3, // 🔥 high-res export
-    width: target.offsetWidth,
-    height: target.offsetHeight
+    scale: 3,
+    width: rect.width,
+    height: rect.height
   });
 
   const link = document.createElement("a");
   link.download = "naivete-class-photo.png";
-  link.href = canvas.toDataURL("image/png", 1.0);
+  link.href = canvas.toDataURL("image/png");
   link.click();
 };
 
