@@ -30,8 +30,9 @@ export default async function handler(req, res) {
       }))
       .filter(n => n.image);
 
-   // return res.status(200).json({ nfts });
-    return {
+   return res.status(200).json({ nfts });
+    
+   return {
   image: image_url,
   name: name,
   attributes: metadata.attributes // 🔥 REQUIRED
