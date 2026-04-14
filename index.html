@@ -121,9 +121,10 @@ html, body {
 /* ===== OVERLAY ===== */
 #overlayRow {
   display:flex;
-  gap:14px;
+  flex-direction:column; /* 🔥 force vertical stack */
+  gap:12px;
   width:100%;
-  align-items:flex-start;
+  align-items:center;
 }
 
 #metaBox {
@@ -367,6 +368,17 @@ html, body {
 
   /* ===== DROPDOWN CHARACTER CARD ===== */
 #characterCardWrapper {
+  margin-top:4px;
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 10px 40px rgba(0,0,0,0.6);
+}
+/*
+  #characterCardWrapper {
+  width:100%;
+  max-width:400px; /* match your image width 
+}*/
+/*
+  #characterCardWrapper {
   width:100%;
   border-radius:14px;
   overflow:hidden;
@@ -374,7 +386,7 @@ html, body {
   backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,0.08);
 }
-
+*/
 #cardToggle {
   width:100%;
   padding:10px;
@@ -468,22 +480,29 @@ html, body {
 <div id="nftOverlay">
   <div id="overlayBox">
 
-    <div id="overlayRow">
+<div id="overlayRow">
 
-      <!-- ✅ CAPTURE TARGET (ONLY THIS GETS EXPORTED) -->
-      <div id="captureArea">
-        <img id="mainNFT" src="" />
-        <div id="hud"></div>
-      </div>
+  <!-- IMAGE -->
+  <div id="captureArea">
+    <img id="mainNFT" src="" />
+    <div id="hud"></div>
+  </div>
 
-      <!-- CHARACTER CARD UI -->
-      <div id="characterCardWrapper">
-  <button id="cardToggle">
-    Character Stats
-    <span id="toggleIcon">▼</span>
-  </button>
+  <!-- CAROUSEL -->
+  <div id="carousel"></div>
 
-  <div id="characterCard"></div>
+  <!-- SAVE BUTTON -->
+  <div id="saveBtn">📸 Save Class Photo</div>
+
+  <!-- DROPDOWN STATS -->
+  <div id="characterCardWrapper">
+    <button id="cardToggle">
+      Character Stats
+      <span id="toggleIcon">▼</span>
+    </button>
+    <div id="characterCard"></div>
+  </div>
+
 </div>
 
     </div>
