@@ -251,6 +251,43 @@ html, body {
   0% { opacity:1; }
   100% { opacity:0; }
 }
+
+  /* ===== STATS PANEL ===== */
+#statsPanel {
+  width:100%;
+  background:rgba(0,0,0,0.6);
+  border-radius:14px;
+  padding:10px;
+  font-size:12px;
+}
+
+.stat {
+  margin-bottom:8px;
+}
+
+.stat-label {
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:2px;
+  font-size:11px;
+  opacity:0.8;
+}
+
+.stat-bar {
+  width:100%;
+  height:8px;
+  background:rgba(255,255,255,0.1);
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.stat-fill {
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#ff6ad5,#ffd36a);
+  width:0%;
+  transition:width 0.6s ease;
+}
 </style>
 </head>
 
@@ -318,16 +355,17 @@ html, body {
       </div>
 
       <!-- 🧠 METADATA PANEL -->
-      <div id="metaBox">
-        <h3 id="metaName"></h3>
-        <div id="metaTraits"></div>
-      </div>
-
-    </div>
-
-    <div id="carousel"></div>
-    <div id="saveBtn">📸 Save Class Photo</div>
+<div id="overlayBox">
+  <div id="overlayImageWrap">
+    <img id="mainNFT" src="" />
+    <div id="hud"></div>
   </div>
+
+  <!-- 🔥 NEW STATS PANEL -->
+  <div id="statsPanel"></div>
+
+  <div id="carousel"></div>
+  <div id="saveBtn">📸 Save Class Photo</div>
 </div>
 
   
@@ -409,41 +447,49 @@ function updateMain(){
 
   document.getElementById("mainNFT").src = nft.image;
 
-  // NAME
-  document.getElementById("metaName").textContent =
-    nft.name || nft.metadata?.name || "Naïveté";
+  const statsEl = document.getElementById("statsPanel");
 
-  // 🧠 TRAITS — handle ALL possible structures
-  const traits =
-    nft.attributes ||
-    nft.traits ||
-    nft.metadata?.attributes ||
-    [];
-
-  const metaEl = document.getElementById("metaTraits");
-  metaEl.innerHTML = "";
-
-  if (!traits.length) {
-    metaEl.innerHTML = `<div style="opacity:.5">No traits found</div>`;
+  if (!nft.attributes) {
+    statsEl.innerHTML = "<div>No stats available</div>";
     return;
   }
 
-  traits.slice(0, 12).forEach(t => {
-    const row = document.createElement("div");
-    row.className = "metaRow";
+  const getAttr = (type) => {
+    return nft.attributes.find(a => 
+      a.trait_type.toLowerCase() === type.toLowerCase()
+    )?.value;
+  };
 
-    const key = document.createElement("div");
-    key.className = "metaKey";
-    key.textContent = t.trait_type || "Trait";
+  const hp = parseInt(getAttr("HP")) || 0;
+  const power = parseInt(getAttr("power level")) || 0;
 
-    const val = document.createElement("div");
-    val.className = "metaVal";
-    val.textContent = t.value;
+  statsEl.innerHTML = `
+    <div class="stat">
+      <div class="stat-label">
+        <span>HP</span>
+        <span>${hp}</span>
+      </div>
+      <div class="stat-bar">
+        <div class="stat-fill" id="hpBar"></div>
+      </div>
+    </div>
 
-    row.appendChild(key);
-    row.appendChild(val);
-    metaEl.appendChild(row);
-  });
+    <div class="stat">
+      <div class="stat-label">
+        <span>Power</span>
+        <span>${power}</span>
+      </div>
+      <div class="stat-bar">
+        <div class="stat-fill" id="powerBar"></div>
+      </div>
+    </div>
+  `;
+
+  // animate bars
+  setTimeout(() => {
+    document.getElementById("hpBar").style.width = Math.min(hp, 150) + "%";
+    document.getElementById("powerBar").style.width = Math.min(power, 150) + "%";
+  }, 50);
 }
 
   console.log("NFT SAMPLE:", nfts[0]);
