@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -533,64 +534,37 @@ document.getElementById("connect").onclick = async () => {
   try {
     let provider;
 
+    // 📱 Detect mobile
     const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
 
-    // 🦊 Try MetaMask SDK FIRST on mobile
+    // 🦊 Use MetaMask SDK for mobile (fixes your issue)
     if (isMobile) {
-      try {
-        const MMSDK = new MetaMaskSDK({
-          dappMetadata: {
-            name: "Naïveté Base Instincts",
-            url: window.location.href,
-          },
-          infuraAPIKey: "3b48e02f5fe24cec9a25b9d72ea870f4",
-        });
-
-        provider = MMSDK.getProvider();
-
-        await MMSDK.connect();
-
-      } catch (err) {
-        console.warn("MetaMask SDK failed, falling back...", err);
-      }
-    }
-
-    // 🔁 Fallback (desktop OR mobile failure)
-    if (!provider) {
-      const web3Modal = new window.Web3Modal.default({
-        cacheProvider: false, // important for mobile
-        providerOptions: {
-          walletconnect: {
-            package: window.WalletConnectProvider.default,
-            options: {
-              infuraId: "3b48e02f5fe24cec9a25b9d72ea870f4"
-            }
-          }
-        }
+      const MMSDK = new MetaMaskSDK({
+        dappMetadata: {
+          name: "Naïveté Base Instincts",
+          url: window.location.href,
+        },
+        infuraAPIKey: "3b48e02f5fe24cec9a25b9d72ea870f4", // your key
       });
 
-      provider = await web3Modal.connect();
+      provider = MMSDK.getProvider();
+
+      // 🔥 THIS triggers proper mobile connect + signature
+      await MMSDK.connect();
+
+    } else {
+      // 💻 Desktop → keep your existing Web3Modal
+const web3Modal = new window.Web3Modal.default({
+  cacheProvider: true,
+  providerOptions: {
+    walletconnect: {
+      package: window.WalletConnectProvider.default,
+      options: {
+        infuraId: "3b48e02f5fe24cec9a25b9d72ea870f4"
+      }
     }
-
-    // 🔗 Ethers hookup
-    const ethersProvider = new ethers.providers.Web3Provider(provider);
-    const signer = ethersProvider.getSigner();
-
-    userAddress = await signer.getAddress();
-
-    // 🔥 FORCE signature (critical for mobile)
-    await signer.signMessage("Sign in to Naïveté");
-
-    document.getElementById("connect").textContent =
-      userAddress.slice(0, 6) + "...";
-
-    fetchNFTs();
-
-  } catch (err) {
-    console.error("Wallet connection failed:", err);
-    alert("Wallet connection failed. Try again.");
   }
-};
+});
 
       async function resetWallet() {
   localStorage.clear();
@@ -603,12 +577,10 @@ document.getElementById("connect").onclick = async () => {
 
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     const signer = ethersProvider.getSigner();
-
-    //await signer.signMessage("Sign in to Naïveté");
-    //await signer.signMessage("Welcome to Naïveté");
     
     userAddress = await signer.getAddress();
-
+    await signer.signMessage("Sign in to Naïveté");
+    //await signer.signMessage("Welcome to Naïveté");
     document.getElementById("connect").textContent =
       userAddress.slice(0, 6) + "...";
 
@@ -802,3 +774,4 @@ window.addEventListener("scroll",()=>{
 
 </body>
 </html>
+
