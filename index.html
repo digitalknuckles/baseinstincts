@@ -564,7 +564,7 @@ document.getElementById("connect").onclick = async () => {
     const signer = ethersProvider.getSigner();
 
     await signer.signMessage("Sign in to Naïveté");
-    await signer.signMessage("Welcome to Naïveté");
+    //await signer.signMessage("Welcome to Naïveté");
     
     userAddress = await signer.getAddress();
 
