@@ -507,7 +507,7 @@ html, body {
   </div>
 </div>
 
-  
+<script src="https://unpkg.com/@metamask/sdk/dist/browser/es/metamask-sdk.js"></script>
 <script type="module" src="rulebook.js"></script>
   
 <script type="module">
@@ -521,24 +521,61 @@ document.getElementById("show-rulebook").onclick = () => {
 };
 
 // connect + auto verify
-document.getElementById("connect").onclick=async()=>{
-  const web3Modal=new window.Web3Modal.default({
-    providerOptions:{
-      walletconnect:{
-        package:window.WalletConnectProvider.default,
-        options:{infuraId:"3b48e02f5fe24cec9a25b9d72ea870f4"}
-      }
+document.getElementById("connect").onclick = async () => {
+  try {
+    let provider;
+
+    // 📱 Detect mobile
+    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
+
+    // 🦊 Use MetaMask SDK for mobile (fixes your issue)
+    if (isMobile) {
+      const MMSDK = new MetaMaskSDK.MetaMaskSDK({
+        dappMetadata: {
+          name: "Naïveté Base Instincts",
+          url: window.location.href,
+        },
+        infuraAPIKey: "3b48e02f5fe24cec9a25b9d72ea870f4", // your key
+      });
+
+      provider = MMSDK.getProvider();
+
+      // 🔥 THIS triggers proper mobile connect + signature
+      await MMSDK.connect();
+
+    } else {
+      // 💻 Desktop → keep your existing Web3Modal
+      const web3Modal = new window.Web3Modal.default({
+        cacheProvider: true,
+        providerOptions: {
+          walletconnect: {
+            package: window.WalletConnectProvider.default,
+            options: {
+              infuraId: "3b48e02f5fe24cec9a25b9d72ea870f4",
+            }
+          }
+        }
+      });
+
+      provider = await web3Modal.connect();
     }
-  });
 
-  const provider=await web3Modal.connect();
-  const ethersProvider=new ethers.providers.Web3Provider(provider);
-  const signer=ethersProvider.getSigner();
+    const ethersProvider = new ethers.providers.Web3Provider(provider);
+    const signer = ethersProvider.getSigner();
 
-  userAddress=await signer.getAddress();
-  document.getElementById("connect").textContent=userAddress.slice(0,6)+"...";
+    await signer.signMessage("Sign in to Naïveté");
+    await signer.signMessage("Welcome to Naïveté");
+    
+    userAddress = await signer.getAddress();
 
-  fetchNFTs();
+    document.getElementById("connect").textContent =
+      userAddress.slice(0, 6) + "...";
+
+    fetchNFTs();
+
+  } catch (err) {
+    console.error("Wallet connection failed:", err);
+  }
 };
 
 async function fetchNFTs(){
