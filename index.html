@@ -507,14 +507,22 @@ html, body {
   </div>
 </div>
 
-<script src="https://unpkg.com/@metamask/sdk/dist/browser/es/metamask-sdk.js"></script>
+
 <script type="module" src="rulebook.js"></script>
-  
+<script src="https://unpkg.com/@metamask/sdk/dist/browser/es/metamask-sdk.js"></script> 
 <script type="module">
 let userAddress=null;
 let nfts=[];
 let selected=0;
 
+window.addEventListener("focus", () => {
+  console.log("Returned from wallet");
+
+  if (userAddress) {
+    fetchNFTs(); // re-check state
+  }
+});
+  
 // rulebook
 document.getElementById("show-rulebook").onclick = () => {
   document.body.appendChild(document.createElement("naivete-rulebook"));
@@ -545,17 +553,23 @@ document.getElementById("connect").onclick = async () => {
 
     } else {
       // 💻 Desktop → keep your existing Web3Modal
-      const web3Modal = new window.Web3Modal.default({
-        cacheProvider: true,
-        providerOptions: {
-          walletconnect: {
-            package: window.WalletConnectProvider.default,
-            options: {
-              infuraId: "3b48e02f5fe24cec9a25b9d72ea870f4",
-            }
-          }
-        }
-      });
+const web3Modal = new window.Web3Modal.default({
+  cacheProvider: true,
+  providerOptions: {
+    walletconnect: {
+      package: window.WalletConnectProvider.default,
+      options: {
+        infuraId: "3b48e02f5fe24cec9a25b9d72ea870f4"
+      }
+    }
+  }
+});
+
+      async function resetWallet() {
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.reload();
+}
 
       provider = await web3Modal.connect();
     }
