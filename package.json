@@ -5,6 +5,7 @@
   "dependencies": {
     "ethers": "^6.11.1",
     "@walletconnect/ethereum-provider": "^2.11.0",
+    "ethers": "^5.7.2",
     "siwe": "^2.1.4",
     "uuid": "^9.0.1"
   }
