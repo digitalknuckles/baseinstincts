@@ -14,7 +14,7 @@ export async function connectWallet() {
     // WalletConnect fallback
     provider = new ethers.providers.Web3Provider(
       await WalletConnectProvider.init({
-        projectId: "YOUR_PROJECT_ID", // walletconnect v2 project id
+        projectId: "4deb72aa5c906f0e7da2c4727c125f96", // walletconnect v2 project id
         chains: [1],
         showQrModal: true
       })
