@@ -534,38 +534,70 @@ document.getElementById("connect").onclick = async () => {
   try {
     let provider;
 
-    // 📱 Detect mobile
-    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
+    const isMetaMaskBrowser =
+      window.ethereum && window.ethereum.isMetaMask;
 
-    // 🦊 Use MetaMask SDK for mobile (fixes your issue)
-    if (isMobile) {
+    const isMobile =
+      /iPhone|iPad|Android/i.test(navigator.userAgent);
+
+    // 🟢 1. BEST CASE: MetaMask in-app browser
+    if (isMetaMaskBrowser) {
+      provider = window.ethereum;
+
+      await provider.request({ method: "eth_requestAccounts" });
+
+    }
+
+    // 🟡 2. Mobile (external browser → use SDK)
+    else if (isMobile) {
       const MMSDK = new MetaMaskSDK({
         dappMetadata: {
           name: "Naïveté Base Instincts",
           url: window.location.href,
         },
-        infuraAPIKey: "3b48e02f5fe24cec9a25b9d72ea870f4", // your key
+        infuraAPIKey: "3b48e02f5fe24cec9a25b9d72ea870f4",
       });
 
       provider = MMSDK.getProvider();
-
-      // 🔥 THIS triggers proper mobile connect + signature
       await MMSDK.connect();
-
-    } else {
-      // 💻 Desktop → keep your existing Web3Modal
-const web3Modal = new window.Web3Modal.default({
-  cacheProvider: true,
-  providerOptions: {
-    walletconnect: {
-      package: window.WalletConnectProvider.default,
-      options: {
-        infuraId: "3b48e02f5fe24cec9a25b9d72ea870f4"
-      }
     }
-  }
-});
 
+    // 🔵 3. Desktop fallback (Web3Modal)
+    else {
+      const web3Modal = new window.Web3Modal.default({
+        cacheProvider: true,
+        providerOptions: {
+          walletconnect: {
+            package: window.WalletConnectProvider.default,
+            options: {
+              infuraId: "3b48e02f5fe24cec9a25b9d72ea870f4",
+            },
+          },
+        },
+      });
+
+      provider = await web3Modal.connect();
+    }
+
+    // 🔗 Ethers hookup
+    const ethersProvider = new ethers.providers.Web3Provider(provider);
+    const signer = ethersProvider.getSigner();
+
+    userAddress = await signer.getAddress();
+
+    // 🔥 REQUIRED for mobile reliability
+    await signer.signMessage("Sign in to Naïveté");
+
+    document.getElementById("connect").textContent =
+      userAddress.slice(0, 6) + "...";
+
+    fetchNFTs();
+
+  } catch (err) {
+    console.error("Wallet connection failed:", err);
+    alert("Wallet connection failed");
+  }
+};
       async function resetWallet() {
   localStorage.clear();
   sessionStorage.clear();
