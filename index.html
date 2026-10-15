@@ -541,22 +541,43 @@ document.getElementById("connect").onclick=async()=>{
   fetchNFTs();
 };
 
-async function fetchNFTs(){
-  const res=await fetch(`/api/opensea?address=${userAddress}`);
-  const data=await res.json();
 
-  nfts=data.nfts||[];
+async function fetchNFTs() {
+  try {
+    const res = await fetch(
+      `/api/opensea?address=${encodeURIComponent(userAddress)}`
+    );
 
-  if(!nfts.length){
-    if(confirm("No NFTs found. View on OpenSea?")){
-      window.open("https://opensea.io/collection/naivete","_blank");
+    const contentType = res.headers.get("content-type") || "";
+
+    if (!res.ok) {
+      const body = await res.text();
+      console.error("NFT API failed:", res.status, body);
+      throw new Error(`NFT API returned HTTP ${res.status}`);
     }
-    return;
-  }
 
-  document.getElementById("photo").disabled=false;
-  buildCarousel();
+    if (!contentType.includes("application/json")) {
+      const body = await res.text();
+      console.error("Expected JSON, received:", body);
+      throw new Error("NFT API returned a non-JSON response");
+    }
+
+    const data = await res.json();
+    nfts = data.nfts || [];
+
+    if (!nfts.length) {
+      alert("No NFTs found for this wallet and contract.");
+      return;
+    }
+
+    document.getElementById("photo").disabled = false;
+    buildCarousel();
+  } catch (err) {
+    console.error("fetchNFTs error:", err);
+    alert("Could not load NFTs. Check the browser console.");
+  }
 }
+
 
 function buildCarousel(){
   const el=document.getElementById("carousel");
